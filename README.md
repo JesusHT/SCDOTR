@@ -22,14 +22,16 @@ Instrucciones de instalación
 
     Ejecuta el siguiente comando para dar permisos de ejecución al script:
 
-    bash
+```bash
 
 chmod +x install_libraries.sh
+```
 
 Ejecuta el script con el siguiente comando:
 
-bash
+```bash
 
 ./install_libraries.sh
+```
 
 Este script instalará automáticamente las librerías de Python en tu sistema Ubuntu.
