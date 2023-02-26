@@ -16,7 +16,7 @@ Instalación de librerías de Python en Ubuntu
 
 ## Instrucciones de instalación para Ubuntu 
 
-Clona este repositorio en tu computadora local o descarga el archivo install_libraries.sh. Abre la terminal y navega hasta la ubicación del archivo install_libraries.sh.
+Clona este repositorio en tu computadora local. Abre la terminal y navega hasta la ubicación del archivo install_libraries.sh.
 
 Ejecuta el siguiente comando para dar permisos de ejecución al script:
 
