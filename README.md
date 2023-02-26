@@ -1,18 +1,19 @@
 # SCDOTR
+
 Instalación de librerías de Python en Ubuntu
 
-Este repositorio contiene un script para instalar automáticamente las siguientes librerías de Python en Ubuntu:
+## Este repositorio contiene un script para instalar automáticamente las siguientes librerías de Python en Ubuntu:
 
-    tkinter
-    OpenCV
-    YOLO
-    TensorFlow
-    Conector de MySQL para Python
+    - tkinter
+    - OpenCV
+    - YOLO
+    - TensorFlow
+    - Conector de MySQL para Python
 
-Requisitos previos
+## Requisitos previos
 
-    Ubuntu (versión 18.04 o posterior)
-    Acceso de administrador (para instalar los paquetes)
+    - Ubuntu (versión 18.04 o posterior)
+    - Acceso de administrador (para instalar los paquetes)
 
 Instrucciones de instalación
 
