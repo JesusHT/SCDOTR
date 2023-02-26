@@ -1,11 +1,9 @@
 # SCDOTR
 
-Instalación de librerías de Python en Ubuntu
-
 ## Requisitos previos
 
-    - Ubuntu (versión 18.04 o posterior)
     - Acceso de administrador (para instalar los paquetes)
+    - Acceso a la camara
     - Librerias
         1. tkinter
         2. OpenCV
@@ -14,7 +12,7 @@ Instalación de librerías de Python en Ubuntu
         5. mysql-connector-python
         6. Pytorch
 
-## Instrucciones de instalación para Ubuntu 
+## Instrucciones de instalación para Ubuntu/Raspbian/Debian
 
 Clona este repositorio en tu computadora local. Abre la terminal y navega hasta la ubicación del archivo install_libraries.sh.
 Ejecuta el siguiente comando para dar permisos de ejecución al script:
@@ -31,4 +29,4 @@ Ejecuta el script con el siguiente comando:
 ./install_libraries.sh
 ```
 
-Este script instalará automáticamente las librerías de Python en tu sistema Ubuntu.
+Este script instalará automáticamente las librerías de Python en tu sistema Ubuntu/Raspbian/Debian.
