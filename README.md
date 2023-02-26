@@ -2,21 +2,19 @@
 
 Instalación de librerías de Python en Ubuntu
 
-## Este repositorio contiene un script para instalar automáticamente las siguientes librerías de Python en Ubuntu:
-
-    - tkinter
-    - OpenCV
-    - YOLO
-    - TensorFlow
-    - mysql-connector-python
-    - Pytorch
-
 ## Requisitos previos
 
     - Ubuntu (versión 18.04 o posterior)
     - Acceso de administrador (para instalar los paquetes)
+    - Librerias
+        1. tkinter
+        2. OpenCV
+        3. YOLO
+        4. TensorFlow
+        5. mysql-connector-python
+        6. Pytorch
 
-## Instrucciones de instalación
+## Instrucciones de instalación para Ubuntu 
 
 Clona este repositorio en tu computadora local o descarga el archivo install_libraries.sh. Abre la terminal y navega hasta la ubicación del archivo install_libraries.sh.
 
