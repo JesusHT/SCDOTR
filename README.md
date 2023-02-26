@@ -8,18 +8,19 @@ Instalación de librerías de Python en Ubuntu
     - OpenCV
     - YOLO
     - TensorFlow
-    - Conector de MySQL para Python
+    - mysql-connector-python
+    - Pytorch
 
 ## Requisitos previos
 
     - Ubuntu (versión 18.04 o posterior)
     - Acceso de administrador (para instalar los paquetes)
 
-Instrucciones de instalación
+## Instrucciones de instalación
 
-    1.- Clona este repositorio en tu computadora local o descarga el archivo install_libraries.sh.
-    2.- Abre la terminal y navega hasta la ubicación del archivo install_libraries.sh.
-    3.- Ejecuta el siguiente comando para dar permisos de ejecución al script:
+Clona este repositorio en tu computadora local o descarga el archivo install_libraries.sh. Abre la terminal y navega hasta la ubicación del archivo install_libraries.sh.
+
+Ejecuta el siguiente comando para dar permisos de ejecución al script:
 
 ```shell
 
