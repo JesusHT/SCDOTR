@@ -50,7 +50,7 @@ contact_table.grid(row=0, column=0, sticky="nsew", padx=5, pady=5)
 # Agrega un botón para mostrar los contactos
 show_button = ttk.Button(root, text="Mostrar contactos", command=show_contacts)
 show_button.grid(row=1, column=0, sticky="ew", padx=5, pady=5)
-show_button = ttk.Button(root, text="Capturar nuevo objeto", command=print_screen)
+show_button = ttk.Button(root, text="Capturar nuevo objeto", command=catchCycle)
 show_button.grid(row=2, column=0, sticky="ew", padx=5, pady=5)
 
 # Inicia la aplicación
