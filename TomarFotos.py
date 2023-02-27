@@ -3,17 +3,13 @@ import time as t
 
 rute = "./datasets/img/train/"
 
-def sleep():
-    t.sleep(10)
-
 def setNameProduct():
     return input("Ingresa el nombre del articulo: ")
 
-def definePosition(i):
+def getPosition(i):
     return "front" if i <= 25 else "back" if i <= 50 else "two-way"
 
-def CoolDown(i):
-    
+def takePhoto(i, product_name):
     options = {
         26: "\nPosicione el producto de la parte trasera\n",
         51: "\nPosicione el producto de la parte lateral izquierda\n",
@@ -22,30 +18,31 @@ def CoolDown(i):
 
     if i in options:
         print(options[i])
-        sleep()
+        t.sleep(5)
 
-def catchCycle():
-    getNameProduct = setNameProduct()
-
-    print("\nPosicione el producto frontalmente\n")
-    sleep()
-
-    for i in range(1,101):
-
-        CoolDown(i)
-        
-        captura = cv.VideoCapture(0)
-
-        leido, frame = captura.read()
-
-        position = definePosition(i)
+    try:
+        capture = cv.VideoCapture(0)
+        leido, frame = capture.read()
+        position = getPosition(i)
 
         if leido == True:
-            cv.imwrite(rute + getNameProduct + "_" + position + str(i) + ".jpg", frame)
-            print("Foto tomada correctamente número " + str(i) + " posicion " + position)
+            filename = f"{rute}{product_name}_{position}{i}.jpg"
+            cv.imwrite(filename, frame)
+            print(f"Foto tomada correctamente número {i} en posición {position}")
         else:
-            print("Error" + str(i))
+            print(f"Error al tomar foto {i}")
+    except Exception as e:
+        print(f"Error: {e}")
 
-        captura.release()
+    capture.release()
 
-catchCycle()
+def takeProductPhotos():
+    product_name = setNameProduct()
+    
+    print("\nPosicione el producto frontalmente\n")
+    t.sleep(5)
+
+    for i in range(1, 101):
+        takePhoto(i, product_name)
+
+takeProductPhotos()
