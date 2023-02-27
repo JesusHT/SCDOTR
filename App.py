@@ -1,6 +1,7 @@
 import tkinter as tk
 import tkinter.ttk as ttk
 from conexion import conectar
+from TomarFotos import *
 
 # Conecta a la base de datos
 db = conectar()
@@ -27,10 +28,10 @@ def show_contacts():
 
 # Crea la interfaz de usuario
 root = tk.Tk()
-root.title("Agenda de contactos")
+root.title("SCDORT")
 
 # Establece el icono de la aplicación
-icon_image = tk.PhotoImage(file="./resources/logo.png")
+icon_image = tk.PhotoImage(file="./resources/Logo.png")
 
 # Establece el icono de la aplicación
 root.iconphoto(False, icon_image)
@@ -41,14 +42,16 @@ root.rowconfigure(0, weight=1)
 
 # Crea la tabla de contactos
 contact_table = ttk.Treeview(root, columns=("id", "name", "email"), show="headings")
-contact_table.heading("id", text="ID")
-contact_table.heading("name", text="Nombre")
-contact_table.heading("email", text="Correo electrónico")
+contact_table.heading("id", text="ID Producto")
+contact_table.heading("name", text="Nombre del producto")
+contact_table.heading("email", text="Cantidad")
 contact_table.grid(row=0, column=0, sticky="nsew", padx=5, pady=5)
 
 # Agrega un botón para mostrar los contactos
 show_button = ttk.Button(root, text="Mostrar contactos", command=show_contacts)
 show_button.grid(row=1, column=0, sticky="ew", padx=5, pady=5)
+show_button = ttk.Button(root, text="Capturar nuevo objeto", command=print_screen)
+show_button.grid(row=2, column=0, sticky="ew", padx=5, pady=5)
 
 # Inicia la aplicación
 root.mainloop()
