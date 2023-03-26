@@ -1,48 +1,63 @@
 import cv2 as cv
 import time as t
+import os as sy
 
 rute = "./datasets/img/train/"
 
 def setNameProduct():
     return input("Ingresa el nombre del articulo: ")
 
-def getPosition(i):
-    return "front" if i <= 25 else "back" if i <= 50 else "two-way"
+def setCantPosition():
+    cant = int(input("Ingresa la cantidad de caras del objeto: "))
 
-def takePhoto(i, product_name):
-    options = {
-        26: "\nPosicione el producto de la parte trasera\n",
-        51: "\nPosicione el producto de la parte lateral izquierda\n",
-        76: "\nPosicione el producto de la parte lateral derecha\n"
+    if cant > 0 and cant <= 6:
+        return cant
+    else:
+        print("\nLa cantidad de posciones debe ser al menos 1 o maximo 6.\n")
+        setCantPosition()
+
+def getPositions(i):
+    positions = {
+        1: "Frontal",
+        2: "Trasero",
+        3: "Lateral_izquierdo",
+        4: "Lateral_derecho",
+        5: "Arriba",
+        6: "Abajo"
     }
 
-    if i in options:
-        print(options[i])
-        t.sleep(5)
+    return positions[i] 
 
-    try:
-        capture = cv.VideoCapture(0)
-        leido, frame = capture.read()
-        position = getPosition(i)
+def takePhoto(i, product_name, position):
 
-        if leido == True:
-            filename = f"{rute}{product_name}_{position}{i}.jpg"
-            cv.imwrite(filename, frame)
-            print(f"Foto tomada correctamente número {i} en posición {position}")
-        else:
-            print(f"Error al tomar foto {i}")
-    except Exception as e:
-        print(f"Error: {e}")
+    for i in range(1, 201):
+        try:
+            capture = cv.VideoCapture(1)
+            leido, frame = capture.read()
 
-    capture.release()
+            if leido == True:
+                filename = f"{rute}{product_name}_{position}{i}.jpg"
+                cv.imwrite(filename, frame)
+                print(f"\nFoto tomada correctamente número {i} en posición {position}")
+            else:
+                print(f"Error al tomar foto {i}")
+        except Exception as e:
+            print(f"Error: {e}")
+
+        capture.release()
 
 def takeProductPhotos():
     product_name = setNameProduct()
+    cant_position = setCantPosition()
     
-    print("\nPosicione el producto frontalmente\n")
-    t.sleep(5)
+    for i in range(1, int(cant_position + 1)):
+        position = getPositions(i)
+        
+        sy.system("clear")
+        print(f"\nPosicione el producto de forma {position}\n")
+        
+        t.sleep(10)
 
-    for i in range(1, 101):
-        takePhoto(i, product_name)
+        takePhoto(i, product_name, position)
 
 takeProductPhotos()
