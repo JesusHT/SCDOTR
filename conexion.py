@@ -5,5 +5,5 @@ def conectar():
       host="localhost",
       user="root",
       password="12015",
-      database="jadarbank"
+      database="inventario"
 )
