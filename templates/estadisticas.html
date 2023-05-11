@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Main</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/nav.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar__logo">
+            <a href="#">Logo</a>
+        </div>
+        <ul class="navbar__list">
+            <li class="navbar__item"><a href="/estadisticas">Inicio</a></li>
+            <li class="navbar__item"><a href="/productos">Inventario</a></li>
+            <li class="navbar__item"><a href="/proveedores">Proveedores</a></li>
+            <li class="navbar__item"><a href="/logout">Cerrar session</a></li>
+        </ul>
+        <div class="navbar__user">
+            <span>{{ username }}</span>
+        </div>
+        <button class="navbar__toggle">
+            <span class="navbar__toggle-icon"></span>
+        </button>
+    </nav> 
+    <h1>Vista principal</h1>
+</body>
+</html>

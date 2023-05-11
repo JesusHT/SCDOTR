@@ -116,7 +116,14 @@ const productos = {
             body : form
         }).then(response => response.json())
             .then(data => {
-                
+                if (data == true) {
+                    alert("Agregado correctamente.");
+                    views.load("/productos");
+                } else {
+                    this.elementos.errors.innerHTML = '';
+                    const errorList = data.map(error => `<li>${error}</li>`).join('');
+                    this.elementos.errors2.innerHTML = errorList;
+                }
             }).catch(error => {console.error(error)});
     },
 
@@ -124,7 +131,7 @@ const productos = {
         fetch('/proveedores/obtener')
             .then(response => response.json())
             .then(data => {
-                let html = "<option disabled selected>Elige un proveedor<option>"
+                let html = '<option value="0" disabled selected>Elige un proveedor<option>';
                 
                 data.forEach(proveedor => {
                     html += `<option value="${proveedor[0]}">${proveedor[1]}</option>`;

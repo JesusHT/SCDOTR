@@ -5,7 +5,7 @@ const views = {
 
     loadRole : function(role){
         if (role == "admin") {
-            this.load("productos")      
+            this.load("estadisticas")      
         } else {
             this.load("cobro")
         }
