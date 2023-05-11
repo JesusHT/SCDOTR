@@ -1,6 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify, session
 from libs.permissions import RoutePermission
-from libs.connection import MySQLConnection
 from libs.login import Login
 from libs.productos import Productos
 from libs.provedores import Proveedores
@@ -45,8 +44,13 @@ def logout():
 @app.route('/productos')
 @permission.verificar_permiso("/productos", ['admin'])
 def productoAll():
-    productos = products.getProduct()
-    return render_template('index.html', productos=productos, username=session.get("username"))
+    return render_template('index.html', username=session.get("username"))
+
+@app.route('/productos/all')
+def productsAll():
+    producto = products.getProduct()
+
+    return jsonify(producto)
 
 @app.route('/productos/<int:id_product>', methods=['GET'])
 def producto(id_product):
@@ -56,7 +60,6 @@ def producto(id_product):
 
 @app.route('/editar', methods=['POST'])
 def updateProduct():
-    validar = None  # inicializar la variable validar a None
     form_data = request.form
 
     data_dict = {
@@ -76,9 +79,38 @@ def updateProduct():
     else:
         print(validar)
         return jsonify(validar)
+    
+@app.route('/productos/contar/<int:id_product>', methods=['GET'])
+def contar(id_product):
+    producto = products.getProductByID(id_product)
+    
+    cantidad = producto[0][5]
+
+    if cantidad > 0:
+        return jsonify(cantidad) 
+
+    return jsonify(False)
+
+@app.route('/productos/eliminar/<int:id_product>', methods=['GET'])
+def eliminar(id_product):
+    products.deleteProduct(id_product)
+
+    return jsonify(True)
+
+@app.route('/productos/buscar/<string:search>', methods=['GET'])
+def buscar(search):
+    producto = products.buscarProduct(search)
+    return jsonify(producto)
 
 
 ############################# PROVEDROES ##########################################
+
+@app.route('/proveedores/obtener')
+def getProveedores():
+    proveedores = suppliers.getAllProveedores()
+    print(proveedores)
+
+    return jsonify(proveedores)
 
 ############################# ESTADISTICA ##########################################
 

@@ -46,4 +46,19 @@ class Productos:
         WHERE id = %s
         """
         parametros = (id_producto,)
+        
         self.conexion.ejecutar_query(query, parametros)
+
+    def buscarProduct(self, busqueda):
+        search_str = f'%{busqueda}%'
+
+        query =  """
+        SELECT producto.*, proveedor.nombre_empresa
+        FROM producto
+        JOIN proveedor ON producto.proveedor_id = proveedor.id
+        WHERE producto.nombre LIKE %s OR producto.descripcion LIKE %s OR proveedor.nombre_empresa LIKE %s
+        """
+
+        parametros = (search_str, search_str, search_str)
+
+        return self.conexion.obtener_registros(query, parametros)
