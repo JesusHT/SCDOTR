@@ -1,0 +1,20 @@
+{
+    "routes": [
+        {
+          "path": "/productos",
+          "roles": ["admin"]
+        },
+        {
+          "path": "/provedores",
+          "roles": ["admin"]
+        },
+        {
+          "path": "/login",
+          "roles": []
+        },
+        {
+          "path": "/cobrar",
+          "roles": ["user"]
+        }
+    ]
+}
