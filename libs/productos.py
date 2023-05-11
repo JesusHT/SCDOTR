@@ -38,6 +38,7 @@ class Productos:
         """
         parametros = (nombre, descripcion, precio, proveedor_id, total_producto, id_producto)
         self.conexion.ejecutar_query(query, parametros)
+        
 
     def deleteProduct(self, id_producto):
         query = """

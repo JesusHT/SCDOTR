@@ -7,7 +7,8 @@ const productos = {
         existencias : document.getElementById("existencias"),
         idProvedor : document.getElementById("proveedor"),
         modal : document.getElementById("modal"),
-        form : document.getElementById("formUpdate")
+        formUpdate : document.getElementById("formUpdate"),
+        errors : document.getElementById("errors")
     },
 
     obtenerProducto : function (idProducto) {
@@ -36,12 +37,31 @@ const productos = {
         });
     },
 
+    updateProducto : function(){
+        const formData = new FormData(this.elemetos.formUpdate);
+
+        fetch('/editar', {
+            method: 'POST',
+            body: formData
+        }).then(response => response.json())
+            .then(data => {
+                if (data == true) {
+                    alert("Actualizado correctamente.");
+                    views.load("/productos");
+                } else {
+                    this.elemetos.errors.innerHTML = '';
+                    const errorList = data.map(error => `<li>${error}</li>`).join('');
+                    this.elemetos.errors.innerHTML = errorList;
+                }
+        }).catch(error => { console.error(error);});
+    },
+
     cerrarModal : function(){
         this.elemetos.modal.style.display = "none";
     },
 
     clearModal : function(){
-        this.elemetos.form.reset();
+        this.elemetos.formUpdate.reset();
         this.elemetos.idProvedor.innerHTML = "";
     }
 }
