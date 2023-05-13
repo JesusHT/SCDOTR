@@ -21,7 +21,6 @@ const productos = {
         fetch(`/productos/${idProducto}`)
             .then(response => response.json())
             .then(data => { 
-                // Ingresar los proveedores
                 let selectedProveedorId = data[0][4];
                 let options = "";
                             
@@ -30,7 +29,6 @@ const productos = {
                   options += `<option value="${proveedor[0]}" ${selected}>${proveedor[1]}</option>`;
                 });
 
-                // Rellenar los campos del formulario con los datos del producto
                 this.elementos.id.value = data[0][0];
                 this.elementos.nombre.value = data[0][1];
                 this.elementos.descripcion.value = data[0][2];
@@ -38,7 +36,6 @@ const productos = {
                 this.elementos.existencias.value = data[0][5];
                 this.elementos.idProvedor.innerHTML = options;
                         
-                // Mostrar el modal
                 this.elementos.modal.style.display = "block";
         });
     },
@@ -62,9 +59,9 @@ const productos = {
         }).catch(error => { console.error(error);});
     },
 
-    deleteProduct : async function(idProducto) {
+    deleteProduct : async function(idProvedor) {
         try {
-            const response = await fetch(`/productos/contar/${idProducto}`);
+            const response = await fetch(`/proveedores/contar/${idProvedor}`);
             const data = await response.json();
             
             const message = data != false ? `¿Desea eliminar este producto? Usted tiene ${data} producto/s en stock, la acción es irreversible. Escriba CONFIRMAR para confirmar la acción:` 
@@ -73,7 +70,7 @@ const productos = {
             const confirmation = prompt(message);
           
             if (confirmation === "CONFIRMAR") {
-                const deleteResponse = await fetch(`/productos/eliminar/${idProducto}`);
+                const deleteResponse = await fetch(`/productos/eliminar/${idProvedor}`);
                 
                 if (deleteResponse.ok) {
                     alert("Borrado correctamente.");
@@ -81,7 +78,7 @@ const productos = {
                 }
             }
             
-        }catch(error){ console.error(error); }
+        } catch(error){ console.error(error); }
     },
 
     getProductsAll : function(){

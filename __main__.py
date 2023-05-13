@@ -5,7 +5,7 @@ from libs.productos import Productos
 from libs.provedores import Proveedores
 from libs.validateData import ValidateData
 
-############################# INSTANCIAR ##########################################
+############################# INSTANCIAR ##############################################
 
 app = Flask(__name__)
 app.secret_key = 'clave_secreta_aqui'
@@ -14,7 +14,7 @@ products = Productos()
 suppliers = Proveedores()
 validate = ValidateData()
 
-############################# INDEX ##########################################
+############################# INDEX ###################################################
 
 @app.route('/') 
 def index():
@@ -120,16 +120,19 @@ def addProduct():
         products.setProduct(data_dict['nombre'], data_dict['descripcion'], data_dict['precio'], data_dict['proveedor_id'], data_dict['existencias'])
         return jsonify(True)
     else:
-        print(validar)
         return jsonify(validar)
 
 
 ############################# PROVEDROES ##########################################
 
-@app.route('/proveedores')
+# CARGAR VISTA 
+
+@app.route('/proveedores') 
 @permission.verificar_permiso("/proveedores", ['admin'])
 def viewProveedores():
     return render_template('proveedores.html', username=session.get("username"))
+
+# OBTENER LISTA DE PROVEEDORES 
 
 @app.route('/proveedores/obtener')
 def getProveedores():
@@ -137,11 +140,78 @@ def getProveedores():
 
     return jsonify(proveedores)
 
+# OBTENER UN PROVEEDOR ESPECIFICO EN BASE A SU ID
+
 @app.route('/proveedores/<int:id_proveedor>', methods=['GET'])
 def getProveedorById(id_proveedor):
     proveedor = suppliers.getProveedorByID(id_proveedor)
 
     return jsonify(proveedor[0])
+
+# INSERTAR UN NUEVO PROVEEDOR 
+
+@app.route('/proveedores/agregar', methods=['POST'])
+def setProveedor():
+    data = request.form
+
+    data_dict = {
+        'nombre_empresa'  : data['name-empresa'],
+        'nombre_contacto' : data['name-contacto'],
+        'telefono'        : data['telefono'],
+        'email'           : data['email']
+    }
+
+    validar = validate.validar_proveedor(data_dict)
+
+    if validar == True:
+        suppliers.setProveedor(data_dict['nombre_empresa'], data_dict['nombre_contacto'], data_dict['telefono'], data_dict['email'])
+        return jsonify(True)
+    else: 
+        return jsonify(validar)
+
+# ACTUALIZAR INFORMACIÓN DE UN PROVEEDOR EN BASE A SU ID 
+
+@app.route('/proveedores/actualizar', methods=['POST'])
+def updateProveedor():
+    data = request.form
+
+    data_dict = {
+        'id'              : data['id'],
+        'nombre_empresa'  : data['name-empresa'],
+        'nombre_contacto' : data['name-contacto'],
+        'telefono'        : data['telefono'],
+        'email'           : data['email']
+    }
+
+    validar = validate.validar_proveedor(data_dict)
+
+    if validar == True:
+        suppliers.updateProveedor(data_dict['id'], data_dict['nombre_empresa'], data_dict['nombre_contacto'], data_dict['telefono'], data_dict['email'])
+        return jsonify(True)
+    else:
+        return jsonify(validar)
+
+# CONTAR USO DE PROVEEDOR EN BASE A SU ID
+
+@app.route('/proveedores/contar/<int:id_proveedor>', methods=['GET'])
+def countProductsUsingSupplierById(id_proveedor):
+    return suppliers.countProductsUsingSupplierById(id_proveedor)
+
+# ELIMINAR PROVEEDOR 
+
+@app.route('/proveedores/eliminar/<int:id_proveedor>', methods=['GET'])
+def deleteProveedor(id_proveedor):
+    suppliers.deleteProveedor(id_proveedor)
+
+    return jsonify(True)
+
+# BUSCAR PROVEEDORES APARTIR DE NOMBRE DEL CONTACTO O EMPRESA
+
+@app.route('/proveedores/buscar/<string:search>', methods=['GET'])
+def searchProveedor(search):
+    proveedores = suppliers.searchSupplier(search)
+
+    return jsonify(proveedores)
 
 ############################# ESTADISTICA ##########################################
 

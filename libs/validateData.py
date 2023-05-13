@@ -30,14 +30,16 @@ class ValidateData:
         for key, value in data_dict.items():
             if key == 'id' and not value.isdigit():
                 self.errors.append(f"El valor {value} para la columna {key} no es un entero válido")
-            elif key == 'nombre_empresa' and not re.match("^[A-Za-z0-9 ,.-]+$", value):
+            elif key == 'nombre_empresa' and not re.match("^[A-Za-z0-9 ,.-]+$", value) and value != '':
                 self.errors.append(f"El valor {value} para la columna {key} contiene caracteres no permitidos")
-            elif key == 'nombre_contacto' and not re.match("^[A-Za-z ,.-]+$", value):
+            elif key == 'nombre_contacto' and not re.match("^[A-Za-z ,.-]+$", value) and value != '':
                 self.errors.append(f"El valor {value} para la columna {key} contiene caracteres no permitidos")
-            elif key == 'telefono' and not re.match("^[0-9-]+$", value):
+            elif key == 'telefono' and not re.match("^[0-9-]+$", value) and value != '':
                 self.errors.append(f"El valor {value} para la columna {key} no es un teléfono válido")
-            elif key == 'email' and not re.match("^[^@]+@[^@]+\.[^@]+$", value):
+            elif key == 'email' and not re.match("^[^@]+@[^@]+\.[^@]+$", value) and value != '':
                 self.errors.append(f"El valor {value} para la columna {key} no es un correo electrónico válido")
+            elif value == '':
+                self.errors.append(f"El valor para la columna {key} está vacío")
 
         if len(self.errors) > 0:
            return self.errors
