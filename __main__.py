@@ -4,15 +4,17 @@ from libs.login import Login
 from libs.productos import Productos
 from libs.provedores import Proveedores
 from libs.validateData import ValidateData
+from libs.estadisticas import Estadisticas
 
 ############################# INSTANCIAR ##############################################
 
-app = Flask(__name__)
+app            = Flask(__name__)
 app.secret_key = 'clave_secreta_aqui'
-permission = RoutePermission()
-products = Productos()
-suppliers = Proveedores()
-validate = ValidateData()
+permission     = RoutePermission()
+products       = Productos()
+suppliers      = Proveedores()
+validate       = ValidateData()
+statistics     = Estadisticas()
 
 ############################# INDEX ###################################################
 
@@ -219,6 +221,28 @@ def searchProveedor(search):
 @permission.verificar_permiso("/estadisticas", ['admin'])
 def viewEstadisticas():
     return render_template('estadisticas.html', username=session.get("username"))
+
+# OBTENER LOS 5 PRODUCTOS MÁS VENDIDOS EN GENERAL
+
+@app.route('/estadisticas/productosmasvendidos')
+def getBestSellingProducts():
+    return statistics.getBestSellingProducts()
+
+# OBTENER FECHAS DE LAS COMPRAS 
+
+@app.route('/estadisticas/fechas')
+def getFechasCompras():
+    return statistics.getFechasCompras()
+
+# OBTENER LOS 5 PRODUCTOS MÁS VENDIDOS POR PERIODO (MES)
+
+@app.route('/estadisticas/productosmasvendidos/<int:mes>', methods=['GET'])
+def getBestSellingProductsByMes(mes):
+    if mes == 0:
+        return statistics.getBestSellingProducts()
+    else :
+        return statistics.getBestSellingProductsByMes(mes)
+
 
 ############################# COBROS ##########################################
 

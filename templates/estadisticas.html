@@ -6,6 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - Main</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/nav.css') }}">
+    <style>
+        #myChart {
+            max-width: 400px;
+            max-height: 400px;
+        }
+    </style>    
 </head>
 <body>
     <nav class="navbar">
@@ -25,6 +31,23 @@
             <span class="navbar__toggle-icon"></span>
         </button>
     </nav> 
+
     <h1>Vista principal</h1>
+
+    <div>
+        <label for="mes">Productos más vendidos por: </label>
+        <select name="mes" id="mes">
+
+        </select>
+        <button type="button" onclick="Estadisticas.getProductosByPeriodo()">Consultar</button>
+    </div>
+    <br><br>
+
+
+    <!-- GRAFICA DE PRODUCTOS MÁS VENDIDOS -->
+    <canvas id="myChart"></canvas>
+
+    <script src="{{ url_for('static', filename='js/estadisticas.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </body>
 </html>

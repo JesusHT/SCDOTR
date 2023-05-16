@@ -22,7 +22,7 @@ const proveedores = {
 
     getProveedoresAll : function (){
         fetch('/proveedores/obtener')
-            .then(responese => responese.json())
+            .then(response => response.json())
             .then(data => {
                 let html = '';
 
