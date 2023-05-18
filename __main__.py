@@ -1,4 +1,8 @@
-from flask import Flask, render_template, request, redirect, url_for, jsonify, session
+import cv2
+import supervision as sv
+import json
+from ultralytics import YOLO
+from flask import Flask, render_template, request, redirect, url_for, jsonify, session, Response
 from libs.permissions import RoutePermission
 from libs.login import Login
 from libs.productos import Productos
@@ -10,6 +14,7 @@ from libs.estadisticas import Estadisticas
 
 app            = Flask(__name__)
 app.secret_key = 'clave_secreta_aqui'
+run_detection  = False
 permission     = RoutePermission()
 products       = Productos()
 suppliers      = Proveedores()
@@ -276,7 +281,93 @@ def getBestSellingProductsByMes(mes):
 def viewCobro():
     return render_template('cobro.html', username=session.get("username"))
 
+# GENERAR VIDEO DE LA DETECCIÓN 
+
+def generate_frames():
+    cap = cv2.VideoCapture(0)
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+
+    model = YOLO("yolov8n.pt")
+
+    box_annotator = sv.BoxAnnotator(
+        thickness=2,
+        text_thickness=2,
+        text_scale=1
+    )
+
+    while True:
+        ret, frame = cap.read()
+        
+        if run_detection:
+            result = model(frame, agnostic_nms=True)[0]
+            detections = sv.Detections.from_yolov8(result)
+
+            labels = [
+                f"{model.model.names[int(c)]} {confidence:0.2f}"
+                for _,_, confidence, c, _
+                in detections
+            ]
+
+            frame = box_annotator.annotate(
+                scene=frame, 
+                detections=detections, 
+                labels=labels
+            ) 
+            
+        # Convertimos el frame en un objeto de respuesta de Flask
+        frame_encoded = cv2.imencode('.jpg', frame)[1]
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + frame_encoded.tobytes() + b'\r\n')
+                
+        if (cv2.waitKey(30) == 27):
+            break
+            
+    cap.release()
+    cv2.destroyAllWindows()
+
+# CARGAR EL VIDEO A LA VISTA 
+
+@app.route('/video_feed')
+def video_feed():
+    return Response(generate_frames(),
+                    mimetype='multipart/x-mixed-replace; boundary=frame')
+
+# INICIAR DETECCIÓN DE OBJETOS
+
+@app.route('/detect', methods=['POST'])
+def detect():
+    global run_detection
+    run_detection = True
+    return jsonify(True)
+
+# DETENER DETECCIÓN DE OBJETOS    
+
+@app.route('/stop_detect', methods=['POST'])
+def stop_detect():
+    global run_detection
+    run_detection = False
+    return jsonify(True)
+
+# OBTENER DETECCIONES 
+
+@app.route('/get_detections', methods=['GET'])
+def get_detections():
+    with open('/home/jesusht/Documentos/SCDOTR/detected/productos.json', 'r') as file:
+        data = json.load(file)
+
+    return jsonify(data)
+
+# REINICIAR EL JSON 
+
+@app.route('/restart_detections', methods=['GET'])
+def restart_detections():
+    data = []
+    
+    with open('/home/jesusht/Documentos/SCDOTR/detected/productos.json', 'w') as file:
+        json.dump(data, file)
+
 ############################# INICIAR PROGRAMA ##########################################
 
 if __name__ == '__main__':
-    app.run(debug=True, port=7070)
+    app.run(debug=True, port=7070)  

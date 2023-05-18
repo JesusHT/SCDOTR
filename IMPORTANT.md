@@ -20,7 +20,7 @@
 
             # Abrimos el archivo JSON y leemos su contenido
             try:
-                with open("/home/jesusht/Descargas/ejemplo/productos.json", "r") as archivo_json:
+                with open("/home/jesusht/Documentos/SCDOTR/detected/productos.json", "r") as archivo_json:
                     products = json.load(archivo_json)
             except FileNotFoundError:
                     products = []
@@ -37,6 +37,6 @@
                     products.append(new_product)
 
             # Escribimos los datos de los productos actualizados en el archivo JSON
-            with open("/home/jesusht/Descargas/ejemplo/productos.json", "w") as archivo_json:
+            with open("/home/jesusht/Documentos/SCDOTR/detected/productos.json", "w") as archivo_json:
                 json.dump(products, archivo_json)
         return log_string
