@@ -1,22 +1,6 @@
 const proveedores = {
     elementos : {
-        errorsUpdate     : document.getElementById("errors-update"),
-        errorsInsert     : document.getElementById("errors-insert"),
-
-        formUpdate       : document.getElementById("form-update"),
-        formInsert       : document.getElementById("form-insert"),
-        
-        modalUpdate      : document.getElementById("modal-update"),
-        modalInsert      : document.getElementById("modal-insert"),
-
         tableProveedores : document.getElementById("table-proveedores"),
-
-        id               : document.getElementById("id"),
-        nameEmpresa      : document.getElementById("name-empresa"),
-        nameContacto     : document.getElementById("name-contacto"),
-        telefono         : document.getElementById("telefono"),
-        email            : document.getElementById("email"),
-
         search           : document.getElementById("search")
     },
 
@@ -35,7 +19,7 @@ const proveedores = {
                             <td>${data[i][3]}</td>
                             <td>${data[i][4]}</td>
                             <td>
-                              <button type="button" onclick="proveedores.getProveedoresById(${data[i][0]})">Editar</button>
+                              <button type="button" class="btn btn-info"   onclick="Template_modal.openModalProveedores(${data[i][0]})">Editar</button>
                               <button type="button" class="btn btn-danger" onclick="proveedores.deleteProveedor(${data[i][0]})" >Eliminar</button>
                             </td>
                         </tr>`;
@@ -45,23 +29,8 @@ const proveedores = {
             }).catch(error => { console.error(error);});
     },
 
-    getProveedoresById : function (id_proveedor){
-        fetch(`/proveedores/${id_proveedor}`)
-            .then(response => response.json())
-            .then(data => {
-
-                this.elementos.id.value           = data[0];
-                this.elementos.nameEmpresa.value  = data[1];
-                this.elementos.nameContacto.value = data[2];
-                this.elementos.telefono.value     = data[3];
-                this.elementos.email.value        = data[4];
-
-                this.elementos.modalUpdate.style.display = "block";
-            }).catch(error => { console.error(error) });
-    },
-
     setProveedor : function (){
-        formData = new FormData(this.elementos.formInsert);
+        formData = new FormData(document.getElementById("form-proveedores"));
 
         fetch('/proveedores/agregar', {
             method: 'POST',
@@ -72,16 +41,13 @@ const proveedores = {
                     alert("Agregado proveedor correctamente.");
                     views.load("/proveedores");
                 } else {
-                    this.elementos.formInsert.reset();
-                    this.elementos.errorsInsert.innerHTML = '';
-                    const errorList = data.map(error => `<li>${error}</li>`).join('');
-                    this.elementos.errorsInsert.innerHTML = errorList;
+                    Template_modal.loadErrors(data);
                 }
             }).catch(error => {console.error(error);});
     },
 
     updateProveedor : function (){
-        formData = new FormData(this.elementos.formUpdate);
+        formData = new FormData(document.getElementById("form-proveedores"));
 
         fetch('/proveedores/actualizar', {
             method: 'POST',
@@ -92,11 +58,7 @@ const proveedores = {
                     alert("Actualizado correctamente.");
                     views.load("/proveedores");
                 } else {
-                    this.elementos.formUpdate.reset();
-                    this.elementos.errorsUpdate.innerHTML = '';
-
-                    const errorList = data.map(error => `<li>${error}</li>`).join('');
-                    this.elementos.errorsUpdate.innerHTML = errorList;
+                    Template_modal.loadErrors(data);
                 }
         }).catch(error => { console.error(error);});
     },
@@ -118,18 +80,6 @@ const proveedores = {
                 views.load("/proveedores");
             }
         }
-    },
-
-    closeModal : function(elemento){
-        document.getElementById(elemento).style.display = "none";
-        this.elementos.errorsInsert.innerHTML = "";
-        this.elementos.errorsUpdate.innerHTML = "";
-        this.elementos.formInsert.reset();
-        this.elementos.formUpdate.reset();
-    },
-
-    openModal : function(){
-        this.elementos.modalInsert.style.display = "block";
     }
 }
 
@@ -159,7 +109,7 @@ proveedores.elementos.search.addEventListener("input", () => {
                                 <td>${data[i][3]}</td>
                                 <td>${data[i][4]}</td>
                                 <td>
-                                  <button type="button" onclick="proveedores.getProveedoresById(${data[i][0]})">Editar</button>
+                                  <button type="button" class="btn btn-info"   onclick="Template_modal.openModalProveedores(${data[i][0]})">Editar</button>
                                   <button type="button" class="btn btn-danger" onclick="proveedores.deleteProveedor(${data[i][0]})" >Eliminar</button>
                                 </td>
                             </tr>`;

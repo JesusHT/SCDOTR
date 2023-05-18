@@ -18,12 +18,16 @@ statistics     = Estadisticas()
 
 ############################# INDEX ###################################################
 
+# CARGAR LA VISTA PRINCIPAL
+
 @app.route('/') 
 def index():
     return render_template('login.html')
 
+
 ############################# LOGIN - LOGOUT ##########################################
 
+# INICIAR SESIÓN
 @app.route('/login', methods=['POST'])
 def login():
     if request.method == 'POST':
@@ -36,40 +40,72 @@ def login():
     
     return render_template('login.html')
 
+# CERAR SESIÓN 
+
 @app.route('/logout')
 def logout():
     session.clear()
     return redirect('/')
 
+
 ############################# PRODUCTOS ##########################################
+
+# CARGAR VISTA
 
 @app.route('/productos')
 @permission.verificar_permiso("/productos", ['admin'])
 def viewProductos():
     return render_template('productos.html', username=session.get("username"))
 
+# OBTENER TODOS LOS PRODUCTOS 
+
 @app.route('/productos/all')
-def productsAll():
+def getProductsAll():
     producto = products.getProduct()
 
     return jsonify(producto)
 
+# OBTENER PRODUCTO EN BASE A SU ID
+
 @app.route('/productos/<int:id_product>', methods=['GET'])
-def producto(id_product):
+def getProductByID(id_product):
     producto = products.getProductByID(id_product)
-    proveedores = suppliers.getAllProveedores()
-    return jsonify([producto[0], proveedores])
+    return jsonify([producto[0]])
+
+# AGREGAR NUEVO PRODUCTO
+
+@app.route('/productos/add', methods=['POST'])
+def setProduct():
+    form_data = request.form
+
+    data_dict = {
+        'nombre'       : form_data['nombre'],
+        'descripcion'  : form_data['descripcion'],
+        'precio'       : form_data['precio'],
+        'existencias'  : form_data['existencias'],
+        'proveedor_id' : form_data['proveedor_id']
+    }
+
+    validar = validate.validar_producto(data_dict)
+
+    if validar == True:
+        products.setProduct(data_dict['nombre'], data_dict['descripcion'], data_dict['precio'], data_dict['proveedor_id'], data_dict['existencias'])
+        return jsonify(True)
+    else:
+        return jsonify(validar)
+
+# ACTUALIZAR UN PRODUCTO 
 
 @app.route('/editar', methods=['POST'])
 def updateProduct():
     form_data = request.form
 
     data_dict = {
-        'id': form_data['id'],
-        'nombre': form_data['nombre'],
-        'descripcion': form_data['descripcion'],
-        'precio': form_data['precio'],
-        'existencias': form_data['existencias'],
+        'id'          : form_data['id'],
+        'nombre'      : form_data['nombre'],
+        'descripcion' : form_data['descripcion'],
+        'precio'      : form_data['precio'],
+        'existencias' : form_data['existencias'],
         'proveedor_id': form_data['proveedor_id']
     }
 
@@ -81,6 +117,16 @@ def updateProduct():
     else:
         print(validar)
         return jsonify(validar)
+
+# ELIMINAR PRODUCTO 
+
+@app.route('/productos/eliminar/<int:id_product>', methods=['GET'])
+def deleteProduct(id_product):
+    products.deleteProduct(id_product)
+
+    return jsonify(True)
+
+# CONTAR LA CANTIDAD DE PRODUCTOS 
     
 @app.route('/productos/contar/<int:id_product>', methods=['GET'])
 def contar(id_product):
@@ -93,36 +139,12 @@ def contar(id_product):
 
     return jsonify(False)
 
-@app.route('/productos/eliminar/<int:id_product>', methods=['GET'])
-def eliminar(id_product):
-    products.deleteProduct(id_product)
-
-    return jsonify(True)
+# BUSCAR UN PRODUCTO EN BASE A SU NOMBRE, DESCRIPCIÓN O PROVEEDOR    
 
 @app.route('/productos/buscar/<string:search>', methods=['GET'])
-def buscar(search):
+def searchProduct(search):
     producto = products.buscarProduct(search)
     return jsonify(producto)
-
-@app.route('/productos/add', methods=['POST'])
-def addProduct():
-    form_data = request.form
-
-    data_dict = {
-        'nombre': form_data['nombre'],
-        'descripcion': form_data['descripcion'],
-        'precio': form_data['precio'],
-        'existencias': form_data['existencias'],
-        'proveedor_id': form_data['proveedor_id']
-    }
-
-    validar = validate.validar_producto(data_dict)
-
-    if validar == True:
-        products.setProduct(data_dict['nombre'], data_dict['descripcion'], data_dict['precio'], data_dict['proveedor_id'], data_dict['existencias'])
-        return jsonify(True)
-    else:
-        return jsonify(validar)
 
 
 ############################# PROVEDROES ##########################################
@@ -215,6 +237,7 @@ def searchProveedor(search):
 
     return jsonify(proveedores)
 
+
 ############################# ESTADISTICA ##########################################
 
 @app.route('/estadisticas')
@@ -245,6 +268,13 @@ def getBestSellingProductsByMes(mes):
 
 
 ############################# COBROS ##########################################
+
+# CARGAR VISTA DE COBRO
+
+@app.route('/cobro')
+@permission.verificar_permiso("/cobro", ['user'])
+def viewCobro():
+    return render_template('cobro.html', username=session.get("username"))
 
 ############################# INICIAR PROGRAMA ##########################################
 

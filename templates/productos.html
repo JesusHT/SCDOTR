@@ -5,30 +5,60 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - Inicio</title>
-	  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/nav.css') }}">
-	  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/table.css') }}">
-	  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/modal.css') }}">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/nav.css') }}">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/table.css') }}">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/modal.css') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 </head>
 <body>
-    <nav class="navbar">
-        <div class="navbar__logo">
-            <a href="#">Logo</a>
+    <nav>
+        <div class="px-3 py-2 bg-dark text-white">
+            <div class="container">
+                <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+                    <a href="/estadisticas" class="d-flex align-items-center my-2 my-lg-0 me-lg-auto text-white text-decoration-none">
+                        <img src="/assets/icons/bootstrap.svg" class="bi me-2" alt="SCDORT" height="32" role="img" aria-label="SCDORT">
+                    </a>
+    
+                    <ul class="nav col-12 col-lg-auto my-2 justify-content-center my-md-0 text-small">
+                        <li>
+                            <a href="/estadisticas" class="nav-link text-white">
+                                <i class="bi bi-house-door  d-block mx-auto mb-1" ></i>
+                                Inicio
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/proveedores" class="nav-link text-white">
+                                <i class="bi bi-truck d-block mx-auto mb-1"></i>
+                                Proveedores
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/productos" class="nav-link text-white">
+                                <i class="bi bi-grid-fill d-block mx-auto mb-1"></i>
+                                Productos
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/logout" class="nav-link text-white">
+                                <i class="bi bi-box-arrow-left d-block mx-auto mb-1"></i>
+                                Cerrar sesión
+                            </a>
+                        </li>
+                        <li>
+                            <div class="nav-link text-white" disabled>
+                                <i class="bi bi-person-circle d-block mx-auto mb-1"></i>
+                                {{ username }}
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
-        <ul class="navbar__list">
-          <li class="navbar__item"><a href="/estadisticas">Inicio</a></li>
-          <li class="navbar__item"><a href="/productos">Inventario</a></li>
-          <li class="navbar__item"><a href="/proveedores">Proveedores</a></li>
-          <li class="navbar__item"><a href="/logout">Cerrar session</a></li>
-        </ul>
-        <div class="navbar__user">
-            <span>{{ username }}</span>
-        </div>
-        <button class="navbar__toggle">
-            <span class="navbar__toggle-icon"></span>
-        </button>
-    </nav>      
+    </nav>
+
     <h1>Lista de Productos</h1>
+
     <input type="text" id="search" name="search"> <br><br>
     <table class="table table-striped table-bordered table-responsive">
         <thead>
@@ -47,57 +77,12 @@
     </table>
 
     <br>
-    <button type="button" onclick="productos.openModalAdd()">Agregar Producto</button>
+    <button type="button" onclick="Template_modal.openModalProductos()">Agregar Producto</button>
     
-    <!-- Modal -->
-    <div id="modal" class="modal">
-      <div class="modal-content">
-        <div><ul id="errors"></ul></div>
-        <h2>Editar Producto</h2>
-        <form id="formUpdate">
-          <label for="nombre">Nombre:</label>
-          <input type="text" id="nombre" name="nombre"><br><br>
-          <label for="descripcion">Descripción:</label>
-          <input type="text" id="descripcion" name="descripcion"><br><br>
-          <label for="precio">Precio:</label>
-          <input type="text" id="precio" name="precio"><br><br>
-          <label for="existencias">Existencias:</label>
-          <input type="number" id="existencias" name="existencias"><br><br>
-          <label for="proveedor">Proveedor:</label>
-          <select id="proveedor" name="proveedor_id">
-
-          </select><br><br>
-          <input type="hidden" id="id" name="id">
-          <button type="button" onclick="productos.updateProducto()">Guardar</button>
-          <button type="button" onclick="productos.cerrarModal('modal')">Cancelar</button>
-        </form>
-      </div>
-    </div>
-
-    <div id="modal2" class="modal">
-      <div class="modal-content">
-        <div><ul id="errors2"></ul></div>
-        <h2>Agregar Producto</h2>
-        <form id="formInsert">
-          <label for="nombre">Nombre:</label>
-          <input type="text" id="nombre" name="nombre"><br><br>
-          <label for="descripcion">Descripción:</label>
-          <input type="text" id="descripcion" name="descripcion"><br><br>
-          <label for="precio">Precio:</label>
-          <input type="text" id="precio" name="precio"><br><br>
-          <label for="existencias">Existencias:</label>
-          <input type="number" id="existencias" name="existencias"><br><br>
-          <label for="proveedor-insert">Proveedor:</label>
-          <select id="proveedor-insert" name="proveedor_id">
-            
-          </select><br><br>
-          <button type="button" onclick="productos.setProducto()">Guardar</button>
-          <button type="button" onclick="productos.cerrarModal('modal2')">Cancelar</button>
-        </form>
-      </div>
-    </div>
+    <div id="container-modal"></div>
     
     <script src="{{ url_for('static', filename='js/productos.js') }}"></script>
     <script src="{{ url_for('static', filename='js/views.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/templateModal.js') }}"></script>
 </body>
 </html>

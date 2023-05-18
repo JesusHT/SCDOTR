@@ -1,47 +1,52 @@
 const productos = {
     elementos : {
-        id : document.getElementById("id"),
-        nombre : document.getElementById("nombre"),
-        descripcion : document.getElementById("descripcion"),
-        precio : document.getElementById("precio"),
-        existencias : document.getElementById("existencias"),
-        idProvedor : document.getElementById("proveedor"),
-        idProvedorAdd : document.getElementById("proveedor-insert"),
-        modal : document.getElementById("modal"),
-        modal2 : document.getElementById("modal2"),
-        formUpdate : document.getElementById("formUpdate"),
-        formInsert : document.getElementById("formInsert"),
-        errors : document.getElementById("errors"),
-        errors2 : document.getElementById("errors2"),
         table_products : document.getElementById("table-products"),
-        search : document.getElementById("search")
+        search         : document.getElementById("search")
     },
 
-    obtenerProducto : function (idProducto) {
-        fetch(`/productos/${idProducto}`)
-            .then(response => response.json())
-            .then(data => { 
-                let selectedProveedorId = data[0][4];
-                let options = "";
-                            
-                data[1].forEach(proveedor => {
-                  let selected = proveedor[0] == selectedProveedorId ? "selected" : "";
-                  options += `<option value="${proveedor[0]}" ${selected}>${proveedor[1]}</option>`;
-                });
+    getProductsAll : function(){
+        fetch('/productos/all').then(response => response.json())
+            .then(data => {
+                let html = '';
+                for (var i = 0; i < data.length; i++) {
+                    html += `
+                        <tr>
+                            <td>${data[i][0]}</td>
+                            <td>${data[i][1]}</td>
+                            <td>${data[i][2]}</td>
+                            <td>$${data[i][3]}</td>
+                            <td>${data[i][6]}</td>
+                            <td>${data[i][5]}</td>
+                            <td>
+                              <button type="button" class="btn btn-info"   onclick="Template_modal.openModalProductos(${data[i][0]})">Editar</button>
+                              <button type="button" class="btn btn-danger" onclick="productos.deleteProduct(${data[i][0]})" >Eliminar</button>
+                            </td>
+                        </tr>`;
+                }
 
-                this.elementos.id.value = data[0][0];
-                this.elementos.nombre.value = data[0][1];
-                this.elementos.descripcion.value = data[0][2];
-                this.elementos.precio.value = data[0][3];
-                this.elementos.existencias.value = data[0][5];
-                this.elementos.idProvedor.innerHTML = options;
-                        
-                this.elementos.modal.style.display = "block";
-        });
+                this.elementos.table_products.innerHTML = html;
+        }).catch(error => { console.error(error);});
+    },
+
+    setProducto : function (){
+        const form = new FormData(document.getElementById('form-productos'));
+
+        fetch('/productos/add', {
+            method: 'POST',
+            body : form
+        }).then(response => response.json())
+            .then(data => {
+                if (data == true) {
+                    alert("Agregado correctamente.");
+                    views.load("/productos");
+                } else {
+                    Template_modal.loadErrors(data);
+                }
+            }).catch(error => {console.error(error)});
     },
 
     updateProducto : function(){
-        const formData = new FormData(this.elementos.formUpdate);
+        const formData = new FormData(document.getElementById('form-productos'));
 
         fetch('/editar', {
             method: 'POST',
@@ -52,9 +57,7 @@ const productos = {
                     alert("Actualizado correctamente.");
                     views.load("/productos");
                 } else {
-                    this.elementos.errors.innerHTML = '';
-                    const errorList = data.map(error => `<li>${error}</li>`).join('');
-                    this.elementos.errors.innerHTML = errorList;
+                    Template_modal.loadErrors(data);
                 }
         }).catch(error => { console.error(error);});
     },
@@ -79,73 +82,6 @@ const productos = {
             }
             
         } catch(error){ console.error(error); }
-    },
-
-    getProductsAll : function(){
-        fetch('/productos/all').then(response => response.json())
-            .then(data => {
-                let html = '';
-                for (var i = 0; i < data.length; i++) {
-                    html += `
-                        <tr>
-                            <td>${data[i][0]}</td>
-                            <td>${data[i][1]}</td>
-                            <td>${data[i][2]}</td>
-                            <td>$${data[i][3]}</td>
-                            <td>${data[i][6]}</td>
-                            <td>${data[i][5]}</td>
-                            <td>
-                              <button type="button" onclick="productos.obtenerProducto(${data[i][0]})">Editar</button>
-                              <button type="button" class="btn btn-danger" onclick="productos.deleteProduct(${data[i][0]})" >Eliminar</button>
-                            </td>
-                        </tr>`;
-                }
-
-                this.elementos.table_products.innerHTML = html;
-        }).catch(error => { console.error(error);});
-    },
-
-    setProducto : function (){
-        const form = new FormData(this.elementos.formInsert);
-
-        fetch('/productos/add', {
-            method: 'POST',
-            body : form
-        }).then(response => response.json())
-            .then(data => {
-                if (data == true) {
-                    alert("Agregado correctamente.");
-                    views.load("/productos");
-                } else {
-                    this.elementos.errors.innerHTML = '';
-                    const errorList = data.map(error => `<li>${error}</li>`).join('');
-                    this.elementos.errors2.innerHTML = errorList;
-                }
-            }).catch(error => {console.error(error)});
-    },
-
-    openModalAdd : function(){
-        fetch('/proveedores/obtener')
-            .then(response => response.json())
-            .then(data => {
-                let html = '<option value="0" disabled selected>Elige un proveedor<option>';
-                
-                data.forEach(proveedor => {
-                    html += `<option value="${proveedor[0]}">${proveedor[1]}</option>`;
-                });
-
-                this.elementos.idProvedorAdd.innerHTML = html
-                this.elementos.modal2.style.display = "block";
-            }).catch(error => {console.error(error)});
-    },
-
-    cerrarModal : function(element){
-        document.getElementById(element).style.display = "none";
-    },
-
-    clearModal : function(){
-        this.elementos.formUpdate.reset();
-        this.elementos.idProvedor.innerHTML = "";
     }
 }
 
@@ -175,7 +111,7 @@ productos.elementos.search.addEventListener("input", () => {
                                 <td>${data[i][6]}</td>
                                 <td>${data[i][5]}</td>
                                 <td>
-                                  <button type="button" onclick="productos.obtenerProducto(${data[i][0]})">Editar</button>
+                                  <button type="button" class="btn btn-info"   onclick="Template_modal.openModalProductos(${data[i][0]})">Editar</button>
                                   <button type="button" class="btn btn-danger" onclick="productos.deleteProduct(${data[i][0]})" >Eliminar</button>
                                 </td>
                             </tr>`;

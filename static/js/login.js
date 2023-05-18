@@ -14,9 +14,10 @@ loginForm.addEventListener('submit', (event) => {
             views.loadRole(data)
             loginForm.reset();
         } else {
-            message.innerHTML = 'Usuario o contraseña incorrectos';
+            message.innerHTML = '<div class="alert alert-danger" role="alert">Usuario o contraseña incorrectos</div>';
             loginForm.reset(); 
         }
     })    
   .catch(error => { console.error(error);});
 });
+

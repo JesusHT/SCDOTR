@@ -15,6 +15,6 @@ class Login:
         if user:
             self.role = user[0][0]
             session['username'] = self.username
-            session['role'] = self.role
+            session['role']     = self.role
             return self.role
         return False

@@ -3,8 +3,8 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 10-05-2023 a las 21:56:19
--- Versión del servidor: 8.0.33-0ubuntu0.22.04.1
+-- Tiempo de generación: 17-05-2023 a las 00:06:17
+-- Versión del servidor: 8.0.33-0ubuntu0.22.04.2
 -- Versión de PHP: 8.1.2-1ubuntu2.11
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
@@ -20,6 +20,72 @@ SET time_zone = "+00:00";
 --
 -- Base de datos: `inventario`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `Compra`
+--
+
+CREATE TABLE `Compra` (
+  `IdCompra` int NOT NULL,
+  `FechaCompra` date NOT NULL,
+  `TotalCompra` decimal(10,2) NOT NULL,
+  `Pago` decimal(10,2) NOT NULL,
+  `Cambio` decimal(10,2) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Volcado de datos para la tabla `Compra`
+--
+
+INSERT INTO `Compra` (`IdCompra`, `FechaCompra`, `TotalCompra`, `Pago`, `Cambio`) VALUES
+(1, '2023-05-10', '74.00', '200.00', '126.00'),
+(2, '2023-04-29', '3.00', '3.00', '0.00');
+
+--
+-- Disparadores `Compra`
+--
+DELIMITER $$
+CREATE TRIGGER `calcular_cambio` BEFORE INSERT ON `Compra` FOR EACH ROW BEGIN
+    SET NEW.Cambio = NEW.TotalCompra - NEW.Pago;
+END
+$$
+DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `DetallesCompra`
+--
+
+CREATE TABLE `DetallesCompra` (
+  `IdCompra` int NOT NULL,
+  `IdProducto` int NOT NULL,
+  `Cantidad` int NOT NULL,
+  `PrecioProducto` decimal(10,2) NOT NULL,
+  `Descuento` decimal(10,2) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Volcado de datos para la tabla `DetallesCompra`
+--
+
+INSERT INTO `DetallesCompra` (`IdCompra`, `IdProducto`, `Cantidad`, `PrecioProducto`, `Descuento`) VALUES
+(1, 1, 2, '34.00', '0.00'),
+(1, 2, 1, '1.50', '0.00'),
+(1, 3, 3, '1.50', '0.00'),
+(2, 2, 2, '1.50', '0.00');
+
+--
+-- Disparadores `DetallesCompra`
+--
+DELIMITER $$
+CREATE TRIGGER `update_precio_producto` BEFORE INSERT ON `DetallesCompra` FOR EACH ROW BEGIN
+    SET NEW.PrecioProducto = (SELECT precio FROM producto WHERE id = NEW.IdProducto);
+END
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -41,7 +107,7 @@ CREATE TABLE `producto` (
 --
 
 INSERT INTO `producto` (`id`, `nombre`, `descripcion`, `precio`, `proveedor_id`, `totalProducto`) VALUES
-(1, 'Coca-Cola', 'Refresco de cola', '1.50', 1, 100),
+(1, 'Coca-Cola', 'Refresco de cola', '4.00', 1, 100),
 (2, 'Pepsi', 'Refresco de cola', '1.50', 1, 80),
 (3, 'Sprite', 'Refresco de lima-limón', '1.50', 1, 50),
 (4, 'Fanta', 'Refresco de naranja', '1.50', 2, 120),
@@ -71,7 +137,7 @@ CREATE TABLE `proveedor` (
 --
 
 INSERT INTO `proveedor` (`id`, `nombre_empresa`, `nombre_contacto`, `telefono`, `email`) VALUES
-(1, 'Coca-Cola Company', 'John Smith', '555-1234', 'john.smith@coca-cola.com'),
+(1, 'Coca-Cola Company', 'John Smith', '555-1238', 'john.smith@coca-cola.com'),
 (2, 'Pepsi Company', 'Jane Doe', '555-5678', 'jane.doe@pepsi.com'),
 (3, 'Frito-Lay', 'Mike Johnson', '555-9876', 'mike.johnson@frito-lay.com');
 
@@ -101,6 +167,19 @@ INSERT INTO `users` (`id`, `username`, `password`, `role`) VALUES
 --
 
 --
+-- Indices de la tabla `Compra`
+--
+ALTER TABLE `Compra`
+  ADD PRIMARY KEY (`IdCompra`);
+
+--
+-- Indices de la tabla `DetallesCompra`
+--
+ALTER TABLE `DetallesCompra`
+  ADD PRIMARY KEY (`IdCompra`,`IdProducto`),
+  ADD KEY `IdProducto` (`IdProducto`);
+
+--
 -- Indices de la tabla `producto`
 --
 ALTER TABLE `producto`
@@ -125,6 +204,12 @@ ALTER TABLE `users`
 --
 
 --
+-- AUTO_INCREMENT de la tabla `Compra`
+--
+ALTER TABLE `Compra`
+  MODIFY `IdCompra` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- AUTO_INCREMENT de la tabla `producto`
 --
 ALTER TABLE `producto`
@@ -134,7 +219,7 @@ ALTER TABLE `producto`
 -- AUTO_INCREMENT de la tabla `proveedor`
 --
 ALTER TABLE `proveedor`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `users`
@@ -145,6 +230,13 @@ ALTER TABLE `users`
 --
 -- Restricciones para tablas volcadas
 --
+
+--
+-- Filtros para la tabla `DetallesCompra`
+--
+ALTER TABLE `DetallesCompra`
+  ADD CONSTRAINT `DetallesCompra_ibfk_1` FOREIGN KEY (`IdCompra`) REFERENCES `Compra` (`IdCompra`) ON DELETE CASCADE,
+  ADD CONSTRAINT `DetallesCompra_ibfk_2` FOREIGN KEY (`IdProducto`) REFERENCES `producto` (`id`);
 
 --
 -- Filtros para la tabla `producto`
