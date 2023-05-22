@@ -62,9 +62,9 @@ const productos = {
         }).catch(error => { console.error(error);});
     },
 
-    deleteProduct : async function(idProvedor) {
+    deleteProduct : async function(idProducto) {
         try {
-            const response = await fetch(`/proveedores/contar/${idProvedor}`);
+            const response = await fetch(`/productos/contar/${idProducto}`);
             const data = await response.json();
             
             const message = data != false ? `¿Desea eliminar este producto? Usted tiene ${data} producto/s en stock, la acción es irreversible. Escriba CONFIRMAR para confirmar la acción:` 
@@ -73,7 +73,7 @@ const productos = {
             const confirmation = prompt(message);
           
             if (confirmation === "CONFIRMAR") {
-                const deleteResponse = await fetch(`/productos/eliminar/${idProvedor}`);
+                const deleteResponse = await fetch(`/productos/eliminar/${idProducto}`);
                 
                 if (deleteResponse.ok) {
                     alert("Borrado correctamente.");

@@ -80,33 +80,48 @@ const Template_modal = {
         let html = `
                 <div id="modal" class="modal">
                     <div class="modal-content">
-                        <div><ul id="errors"></ul></div>
-                        <h2>${config.title}</h2>
-                        <form id="form-productos">
-                            
-                            <label for="nombre">Nombre:</label>
-                            <input type="text" id="nombre" name="nombre" value="${campos.name}" required><br><br>
+                        <div id="error-list" class="alert alert-danger rounded" role="alert" style="display:none;"><ul id="errors"></ul></div>
+                        <h2 class="text-center">${config.title}</h2>
+                        <form id="form-productos" class="form-floating">
 
-                            <label for="descripcion">Descripción:</label>
-                            <input type="text" id="descripcion" name="descripcion" value="${campos.description}" required><br><br>
+                            <div class="form-floating mb-2">
+                                <input type="text" class="form-control w-100" id="nombre" name="nombre" value="${campos.name}"  placeholder="Nombre" required>
+                                <label for="nombre">Nombre</label>
+                            </div>
+
+                            <div class="form-floating mb-2">
+                                <input type="text" class="form-control w-100" id="descripcion" placeholder="Descripcion" name="descripcion" value="${campos.description}" required>
+                                <label for="descripcion">Descripción: </label>
+                            </div>
                             
-                            <label for="precio">Precio:</label>
-                            <input type="text" id="precio" name="precio" value="${campos.price}" required ><br><br>
+                            <div class="form-floating mb-2">
+                                <input type="number" class="form-control w-100" id="precio" name="precio" value="${campos.price}" placeholder="Precio" required>
+                                <label for="precio">Precio</label>
+                            </div>
+
+                            <div class="form-floating mb-2">
+                                <input type="number" class="form-control w-100" id="existencias" placeholder="Existencias" name="existencias" value="${campos.stock}" required>
+                                <label for="existencias">Existencias</label>
+                            </div>
                             
-                            <label for="existencias">Existencias:</label>
-                            <input type="number" id="existencias" name="existencias" value="${campos.stock}" required><br><br>
+                            <div class="form-floating mb-2">
+                                <select class="form-select w-100" id="proveedores" aria-label="Proveedores" name="proveedor_id" required>
+                                    ${campos.proveedores}
+                                </select>
+                                <label for="proveedores">Proveedores</label>
+                            </div>
                             
-                            <label for="proveedores">Proveedor:</label>
-                            <select id="proveedores" name="proveedor_id" required>
-                                ${campos.proveedores}
-                            </select><br><br>
                             <input type="hidden" id="id" name="id" value="${campos.id}">
 
-                            <button type="button" onclick="${config.func}">Guardar</button>
-                            <button type="button" onclick="Template_modal.closedModal()">Cancelar</button>
+                            <div align="right">
+                                <button class="btn btn-danger"  type="button" onclick="Template_modal.closedModal()">Cancelar</button>
+                                <button class="btn btn-success" type="button" onclick="${config.func}">Guardar</button>
+                            </div>
                         </form>
                     </div>
                 </div>
+
+                
         `;
 
         document.getElementById('container-modal').innerHTML = html;
@@ -119,26 +134,36 @@ const Template_modal = {
         let html = `
             <div id="modal" class="modal">
                 <div class="modal-content">
-                    <div><ul id="errors"></ul></div>
-                    <h2>${config.title}</h2>
-                    <form id="form-proveedores">
+                    <div id="error-list" class="alert alert-danger" role="alert" style="display:none;"><ul id="errors"></ul></div>
+                    <h2 class="text-center">${config.title}</h2>
+                    <form id="form-proveedores" class="form-floating">
+                    
                         <input type="hidden" id="id" name="id" value="${campos.id}">
 
-                        <label for="name-empresa">Nombre de la empresa:</label>
-                        <input type="text" id="name-empresa" name="name-empresa" value="${campos.name_empresa}" required><br><br>
+                        <div class="form-floating mb-2">
+                            <input type="text" class="form-control w-100" id="name-empresa" placeholder="name-empresa" name="name-empresa" value="${campos.name_empresa}" required>
+                            <label for="name-empresa">Empresa: </label>
+                        </div>
 
-                        <label for="name-contacto">Nombre de contacto:</label>
-                        <input type="text" id="name-contacto" name="name-contacto" value="${campos.name_contacto}" required><br><br>
+                        <div class="form-floating mb-2">
+                            <input type="text" class="form-control w-100" id="name-contacto" placeholder="name-contacto" name="name-contacto" value="${campos.name_contacto}" required>
+                            <label for="name-contacto">Contacto: </label>
+                        </div>
 
-                        <label for="telefono">Teléfono:</label>
-                        <input type="tel" id="telefono" name="telefono" value="${campos.telefono}"} required><br><br>
+                        <div class="form-floating mb-2">
+                            <input type="tel" class="form-control w-100" id="telefono" placeholder="Telefono" name="telefono" value="${campos.telefono}" required>
+                            <label for="telefono">Telefono: </label>
+                        </div>
 
-                        <label for="email">Email:</label>
-                        <input type="email" id="email" name="email" value="${campos.email}" required>
+                        <div class="form-floating mb-2">
+                            <input type="email" class="form-control w-100" id="email" placeholder="Email" name="email" value="${campos.email}" required>
+                            <label for="email">Email: </label>
+                        </div>
 
-                        <br><br>
-                        <button type="button" onclick="${config.func}">Guardar</button>
-                        <button type="button" onclick="Template_modal.closedModal()">Cancelar</button>
+                        <div align="right">
+                            <button type="button" class="btn btn-danger" onclick="Template_modal.closedModal()">Cancelar</button>
+                            <button type="button" class="btn btn-success"  onclick="${config.func}">Guardar</button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -149,6 +174,7 @@ const Template_modal = {
     },
 
     loadErrors : function(errors){
+        document.getElementById("error-list").style.display = 'block';
         document.getElementById("errors").innerHTML = '';
         const errorList = errors.map(error => `<li>${error}</li>`).join('');
         document.getElementById("errors").innerHTML = errorList;

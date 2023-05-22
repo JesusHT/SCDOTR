@@ -1,6 +1,8 @@
 const Cobro = {
-    productos  : [],
-    IntervalID : null,
+    productos   : [],
+    valuesTemp  : [],
+    detecciones : [],
+    IntervalID  : null,
 
     elementos : {
         video        : document.getElementById('video-stream'),
@@ -48,27 +50,49 @@ const Cobro = {
     },
 
     loadProducts : function(data){
+        this.detecciones = data;
         this.elementos.product_list.innerHTML = '';
-        let html = ``;
+        let html  = ``;
+        let total = 0;
 
-        for (let i = 0; i < this.productos.length; i++) {      
-            for (let j = 0; j < data.length; j++) {
-                if (this.productos[i].Name == data[j].names) {
-                    html += `
-                            <div class="product mt-2" id="${this.productos[i].Name}-container">
-                                <div class="name">${this.productos[i].Name}</div>
-                                <div class="price">${this.productos[i].Price}</div>
-                                <div class="quantity">
-                                    <button onclick="Cobro.decrementProducts(${this.productos[i].Name})">-</button>
-                                    <input type="text" id="${this.productos[i].Name}" name="${this.productos[i].Name}" value="1">
-                                    <button onclick="Cobro.addProducts(${this.productos[i].Name})">+</button>
-                                </div>
+        const keys = new Set(data.map(key => key.names));
+
+        this.productos.forEach(producto => {
+            Object.keys(producto).filter(key => keys.has(key)).forEach(key => {
+                const newKey = key.replace(/-/, '_');
+                const index  = this.valuesTemp.findIndex(objeto => objeto.hasOwnProperty(newKey));
+                const cant   = index !== -1 ? this.valuesTemp[index][newKey].value : 1;
+
+                html += `
+                        <div class="product mt-2" id="${newKey}-container">
+                            <div class="name">${key.replace(/-/g, "_").replace(/_/g, " ")}</div>
+                            <div class="price">${producto[key].Price}</div>
+                            <div class="quantity">
+                                <button type="button" class="btn-danger" onclick="Cobro.deleteProducto(${newKey})"><i class="bi bi-trash3"></i></button>
+                                <button type="button" onclick="Cobro.decrementProducts(${newKey})">-</button>
+                                <input type="text" id="${newKey}" name="${newKey}" value="${cant}">
+                                <button type="button" onclick="Cobro.addProducts(${newKey})">+</button>
                             </div>
-                    `;
-                }
-                
-            }
-        }
+                        </div>`;
+
+                total += (producto[key].Price * cant);
+            });
+        });
+
+
+        html += `<hr class="mb-2">
+                 <div align="right" class="mt-2">
+                    <label for="pago">Pago: </label>
+                    <input type="number" name="pago" id="pago">
+                    <br>
+                    <label for="total"   id="label-total">Total: ${total}</label>
+                    <input type="hidden" id="total" name="total" value="${total}">
+                 </div>
+                 <div class="mt-2" align="right">
+                    <button type="button" class="btn btn-danger" onclick="Cobro.resetCompra()">Cancelar</button>                 
+                    <button type="button" class="btn btn-success"><i class="bi bi-currency-dollar"></i></button>
+                 </div>
+                 `
 
         this.elementos.product_list.innerHTML = html;
     },
@@ -91,33 +115,118 @@ const Cobro = {
     }, 
 
     formatData : function (data){
-        for (let i = 0; i < data.length; i++) {
-            const elemento = data[i];
-        
-            const producto = {
+
+        this.productos = data.map(elemento => ({
+            [elemento[1]]: {
                 ID          : elemento[0],
-                Name        : elemento[1],
                 Description : elemento[2],
                 Price       : elemento[3],
                 IDsuppliers : elemento[4],
                 Stock       : elemento[5],
-                NameCompany : elemento[6],
-            };
-
-            this.productos.push(producto);
-        }
+                NameCompany : elemento[6]
+            }
+        }));
     }, 
 
     addProducts : function(element){
         if (element.value < 11) {
             element.value = parseInt(element.value) + 1;
+
+            this.addTempValues(element.id, element.value);
+            this.calNewTotal();
         }
     },
 
     decrementProducts : function(element){
         if (element.value > 1) {
             element.value = element.value - 1;
+            
+            this.addTempValues(element.id, element.value);
+            this.calNewTotal();
+        } 
+    },
+
+    addTempValues : function(ID, cant){
+        const index = this.valuesTemp.findIndex(objeto => objeto.hasOwnProperty(ID));
+
+        if (index !== -1) {
+            this.valuesTemp[index][ID].value = cant;
+        } else {
+            this.valuesTemp.push({
+                [ID]: {
+                  value: parseInt(cant)
+                }
+            });
         }
+    },
+
+    calNewTotal : function(){
+        const textInputs = document.querySelectorAll('input[type="text"]');
+        const label      = document.getElementById('label-total');
+        const input      = document.getElementById('total');
+        const prices      = [];
+
+        let total = 0;
+
+        this.productos.forEach(producto => {
+            Object.keys(producto).forEach(key => {
+                prices.push({
+                    [key.replace(/-/, '_')]: {
+                        price : producto[key].Price
+                    }
+                });
+            });   
+        });
+
+        textInputs.forEach(elemento => {
+            const index  = prices.findIndex(objeto => objeto.hasOwnProperty(elemento.id));
+
+            if (index !== -1) {
+                total += parseInt(document.getElementById(elemento.id).value) * prices[index][elemento.id].price;
+            }
+        })
+
+        label.innerHTML = `Total: ${total}`;
+        input.value     = total;
+    },
+
+    deleteProducto : function(product){
+        let element = '';
+        
+        this.detecciones.forEach((producto, index) => {
+            if (producto.names.replace(/-/, '_') === product.id) {
+                element = producto.names.replace(/-/, '_');
+                this.detecciones.splice(index, 1);
+            }
+        });
+
+        const index = this.valuesTemp.findIndex(objeto => objeto.hasOwnProperty(product.id));
+        if (index !== -1) {
+            this.valuesTemp.splice(index, 1);
+        }
+
+        const json = JSON.stringify(this.detecciones);
+
+        fetch('/nuevoproductos', {
+            method: 'POST',
+            body: json,
+            headers: {'Content-Type': 'application/json'}
+        }).then(response => response.json())
+            .then(data => {
+                if (data === true) {
+                  document.getElementById(`${element}-container`).innerHTML = '';
+                  document.getElementById(`${element}-container`).style.display = 'none';
+
+                  this.calNewTotal();
+                }
+        }).catch(error => {console.error(error);});
+    },
+
+    resetCompra : function(){
+        this.valuesTemp  = [];
+        this.detecciones = [];
+        this.elementos.product_list.innerHTML = '';
+        //this.restartDetections();
     }
 }
 

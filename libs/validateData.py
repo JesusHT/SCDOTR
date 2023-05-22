@@ -10,7 +10,7 @@ class ValidateData:
         for key, value in data_dict.items():
             if key == 'id' and not value.isdigit():
                 self.errors.append(f"El valor {value} para la columna {key} no es un entero válido")
-            elif key in ('nombre', 'descripcion') and not re.match("^[A-Za-z0-9 ,.\-'áéíóúÁÉÍÓÚñÑ]+$", value)  and value != '':
+            elif key in ('nombre', 'descripcion') and not re.match("^[A-Za-z0-9 ,.\-_'áéíóúÁÉÍÓÚñÑ]+$", value)  and value != '':
                 self.errors.append(f"El valor {value} para la columna {key} contiene caracteres no permitidos")
             elif key == 'precio' and not re.match("^[0-9]+(\.[0-9]{1,2})?$", value)  and value != '':
                 self.errors.append(f"El valor {value} para la columna {key} no es un decimal válido")

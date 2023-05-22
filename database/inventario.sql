@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 17-05-2023 a las 00:06:17
+-- Tiempo de generación: 21-05-2023 a las 00:26:35
 -- Versión del servidor: 8.0.33-0ubuntu0.22.04.2
 -- Versión de PHP: 8.1.2-1ubuntu2.11
 
@@ -41,14 +41,15 @@ CREATE TABLE `Compra` (
 
 INSERT INTO `Compra` (`IdCompra`, `FechaCompra`, `TotalCompra`, `Pago`, `Cambio`) VALUES
 (1, '2023-05-10', '74.00', '200.00', '126.00'),
-(2, '2023-04-29', '3.00', '3.00', '0.00');
+(2, '2023-04-29', '3.00', '3.00', '0.00'),
+(3, '2023-05-20', '100.00', '150.00', '-50.00');
 
 --
 -- Disparadores `Compra`
 --
 DELIMITER $$
 CREATE TRIGGER `calcular_cambio` BEFORE INSERT ON `Compra` FOR EACH ROW BEGIN
-    SET NEW.Cambio = NEW.TotalCompra - NEW.Pago;
+    SET NEW.Cambio = NEW.Pago - NEW.TotalCompra;
 END
 $$
 DELIMITER ;
@@ -75,11 +76,23 @@ INSERT INTO `DetallesCompra` (`IdCompra`, `IdProducto`, `Cantidad`, `PrecioProdu
 (1, 1, 2, '34.00', '0.00'),
 (1, 2, 1, '1.50', '0.00'),
 (1, 3, 3, '1.50', '0.00'),
+(1, 7, 2, '2.50', '0.00'),
 (2, 2, 2, '1.50', '0.00');
 
 --
 -- Disparadores `DetallesCompra`
 --
+DELIMITER $$
+CREATE TRIGGER `agregar_producto` AFTER INSERT ON `DetallesCompra` FOR EACH ROW BEGIN
+    -- Obtener la cantidad del producto a agregar
+    DECLARE cantidad_agregar INT;
+    SET cantidad_agregar = NEW.Cantidad;
+
+    -- Restar la cantidad del producto del inventario
+    UPDATE `producto` SET `totalProducto` = `totalProducto` - cantidad_agregar WHERE `id` = NEW.IdProducto;
+END
+$$
+DELIMITER ;
 DELIMITER $$
 CREATE TRIGGER `update_precio_producto` BEFORE INSERT ON `DetallesCompra` FOR EACH ROW BEGIN
     SET NEW.PrecioProducto = (SELECT precio FROM producto WHERE id = NEW.IdProducto);
@@ -107,16 +120,16 @@ CREATE TABLE `producto` (
 --
 
 INSERT INTO `producto` (`id`, `nombre`, `descripcion`, `precio`, `proveedor_id`, `totalProducto`) VALUES
-(1, 'Coca-Cola', 'Refresco de cola', '4.00', 1, 100),
-(2, 'Pepsi', 'Refresco de cola', '1.50', 1, 80),
-(3, 'Sprite', 'Refresco de lima-limón', '1.50', 1, 50),
-(4, 'Fanta', 'Refresco de naranja', '1.50', 2, 120),
-(5, 'Powerade', 'Bebida isotónica', '2.00', 2, 70),
-(6, 'Aquafina', 'Agua purificada', '1.00', 2, 200),
-(7, 'Galletas Oreo', 'Galletas rellenas de crema', '2.50', 3, 50),
-(8, 'Doritos', 'Botana de tortilla de maíz', '1.75', 3, 100),
-(9, 'Cheetos', 'Botana de queso', '1.50', 3, 80),
-(10, 'Lays', 'Papas fritas', '1.50', 3, 120);
+(1, 'Coca-cola_mediana', 'Refresco de cola mediano', '4.00', 1, 100),
+(2, 'Coca-cola_chica', 'Refresco de cola chico', '1.50', 1, 80),
+(3, 'Chocorroles', 'Pastelito con relleno de piña', '1.00', 2, 50),
+(4, 'Canelitas', 'Galletas espolvoreadas de azúcar', '1.50', 2, 120),
+(5, 'Galletas_principe', 'Galletas con relleno de chocolate', '2.00', 2, 70),
+(6, 'Sabritas_adobadas', 'Sabritas sabor adobadas', '1.00', 3, 200),
+(7, 'Chetos', 'Botana sabor queso', '2.50', 3, 48),
+(8, 'Chocolate_kinder', 'Pastelito sabor chocolate', '1.75', 5, 100),
+(9, 'Rockaleta', 'Paleta sabor picante', '1.50', 7, 80),
+(10, 'Pikaros', 'Bolitas de dulce sabor picante', '1.50', 7, 120);
 
 -- --------------------------------------------------------
 
@@ -138,8 +151,11 @@ CREATE TABLE `proveedor` (
 
 INSERT INTO `proveedor` (`id`, `nombre_empresa`, `nombre_contacto`, `telefono`, `email`) VALUES
 (1, 'Coca-Cola Company', 'John Smith', '555-1238', 'john.smith@coca-cola.com'),
-(2, 'Pepsi Company', 'Jane Doe', '555-5678', 'jane.doe@pepsi.com'),
-(3, 'Frito-Lay', 'Mike Johnson', '555-9876', 'mike.johnson@frito-lay.com');
+(2, 'Marinela', 'Jane Doe', '555-5678', 'jane.doe@marinela.com'),
+(3, 'Frito-Lay', 'Mike Johnson', '555-9876', 'mike.johnson@frito-lay.com'),
+(5, 'Kinder', 'Michel Johnson', '555-1234', 'michel@kinder.com'),
+(6, 'Ricolino', 'Jessica Pearson', '555-4563', 'jessica@ricolino.com'),
+(7, 'Sonrics', 'Mike Myers', '555-2932', 'mike@sonrics.com');
 
 -- --------------------------------------------------------
 
@@ -207,7 +223,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT de la tabla `Compra`
 --
 ALTER TABLE `Compra`
-  MODIFY `IdCompra` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `IdCompra` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `producto`
@@ -219,7 +235,7 @@ ALTER TABLE `producto`
 -- AUTO_INCREMENT de la tabla `proveedor`
 --
 ALTER TABLE `proveedor`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de la tabla `users`

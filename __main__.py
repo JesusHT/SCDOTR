@@ -367,6 +367,19 @@ def restart_detections():
     with open('/home/jesusht/Documentos/SCDOTR/detected/productos.json', 'w') as file:
         json.dump(data, file)
 
+    return jsonify(True)
+
+# ELIMINAR EL PRODUCTO QUE EL USUARIO NO SE QUIERE LLEVAR
+
+@app.route('/nuevoproductos', methods=['POST'])
+def newProducts():
+    data = request.get_json()
+
+    with open('/home/jesusht/Documentos/SCDOTR/detected/productos.json', 'w') as file:
+        json.dump(data, file)   
+
+    return jsonify(True)
+
 ############################# INICIAR PROGRAMA ##########################################
 
 if __name__ == '__main__':
