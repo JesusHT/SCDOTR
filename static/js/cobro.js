@@ -8,7 +8,8 @@ const Cobro = {
         video        : document.getElementById('video-stream'),
         product_list : document.getElementById('product-list'),
         detectar     : document.getElementById('detectar'),
-        detener      : document.getElementById('detener')
+        detener      : document.getElementById('detener'),
+        form         : document.getElementById('form-cobro')
     },
 
     getProductsAll : function(){
@@ -83,14 +84,14 @@ const Cobro = {
         html += `<hr class="mb-2">
                  <div align="right" class="mt-2">
                     <label for="pago">Pago: </label>
-                    <input type="number" name="pago" id="pago">
+                    <input type="number" name="pago" id="pago" required>
                     <br>
                     <label for="total"   id="label-total">Total: ${total}</label>
                     <input type="hidden" id="total" name="total" value="${total}">
                  </div>
                  <div class="mt-2" align="right">
-                    <button type="button" class="btn btn-danger" onclick="Cobro.resetCompra()">Cancelar</button>                 
-                    <button type="button" class="btn btn-success"><i class="bi bi-currency-dollar"></i></button>
+                    <button type="button" class="btn btn-danger"  onclick="Cobro.resetCompra()">Cancelar</button>                 
+                    <button type="button" class="btn btn-success" onclick="Cobro.payProduct()"><i class="bi bi-currency-dollar"></i></button>
                  </div>
                  `
 
@@ -218,8 +219,14 @@ const Cobro = {
                   document.getElementById(`${element}-container`).style.display = 'none';
 
                   this.calNewTotal();
+                  this.existProducts();
                 }
         }).catch(error => {console.error(error);});
+    },
+
+    existProducts : function(){
+        const textInputs = document.querySelectorAll('input[type="text"]');
+        if (textInputs.length === 0) { this.resetCompra(); }
     },
 
     resetCompra : function(){
@@ -227,6 +234,18 @@ const Cobro = {
         this.detecciones = [];
         this.elementos.product_list.innerHTML = '';
         //this.restartDetections();
+    },
+
+    payProduct : function(){
+        const data = new FormData(this.elementos.form)
+
+        fetch('/pagarproductos', {
+            method : 'POST',
+            body   : data
+        }).then(response => response.json())
+            .then(data => {
+                console.log(data);
+            }).catch(error => { console.error(error);});
     }
 }
 

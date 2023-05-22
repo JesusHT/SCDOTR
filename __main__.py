@@ -353,7 +353,7 @@ def stop_detect():
 
 @app.route('/get_detections', methods=['GET'])
 def get_detections():
-    with open('/home/jesusht/Documentos/SCDOTR/detected/productos.json', 'r') as file:
+    with open('/home/jesusht/Documents/SCDOTR/detected/productos.json', 'r') as file:
         data = json.load(file)
 
     return jsonify(data)
@@ -364,7 +364,7 @@ def get_detections():
 def restart_detections():
     data = []
     
-    with open('/home/jesusht/Documentos/SCDOTR/detected/productos.json', 'w') as file:
+    with open('/home/jesusht/Documents/SCDOTR/detected/productos.json', 'w') as file:
         json.dump(data, file)
 
     return jsonify(True)
@@ -375,8 +375,18 @@ def restart_detections():
 def newProducts():
     data = request.get_json()
 
-    with open('/home/jesusht/Documentos/SCDOTR/detected/productos.json', 'w') as file:
+    with open('/home/jesusht/Documents/SCDOTR/detected/productos.json', 'w') as file:
         json.dump(data, file)   
+
+    return jsonify(True)
+
+# PAGAR PRODUCTOS
+
+@app.route('/pagarproductos', methods=['POST'])
+def payProducts():
+    data = request.form
+
+    print(data)
 
     return jsonify(True)
 
