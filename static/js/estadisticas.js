@@ -16,7 +16,11 @@ const Estadisticas = {
     getEstadisticas : async function () {
         try {
             const responseProductos = await fetch('/estadisticas/productosmasvendidos');
-            const dataProductos = await responseProductos.json();
+            const dataProductos     = await responseProductos.json();
+
+            const [nombreProductoMayorCantidad] = dataProductos.reduce((mayorProducto, producto) =>
+                parseInt(producto[1]) > parseInt(mayorProducto[1]) ? producto : mayorProducto
+            ); 
 
             this.datosGrafica.labels = dataProductos.map(d => d[0]);
             this.datosGrafica.values = dataProductos.map(d => d[1]);
@@ -24,9 +28,15 @@ const Estadisticas = {
             this.getGraficar();
             
             const responseFechas = await fetch('/estadisticas/fechas');
-            this.fechasCompras = await responseFechas.json();
+            this.fechasCompras   = await responseFechas.json();
 
             this.getOpciones();
+
+            const estadisticas     = await fetch('/estadisticas/periodos');
+            const dataestadisticas = await estadisticas.json();
+
+            Templates.getDesglose(dataestadisticas, nombreProductoMayorCantidad);
+            Templates.getHistory(dataestadisticas);
                     
         } catch(error){ console.error(error); }
     },
@@ -74,21 +84,34 @@ const Estadisticas = {
         this.elementos.opciones.innerHTML = html;
     },
 
-    getProductosByPeriodo : function(){
+    getProductosByPeriodo :  async function(){
         
         let mes = this.elementos.opciones.value;
 
-        fetch(`/estadisticas/productosmasvendidos/${mes}`)
-            .then(response => response.json())
-            .then(data => {
-                this.datosGrafica.labels = data.map(d => d[0]);
-                this.datosGrafica.values = data.map(d => d[1]);
-                
-                this.getGraficar();
+        try {
+            const products      = await fetch(`/estadisticas/productosmasvendidos/${mes}`);
+            const dataProducts  = await products.json();
 
-            }).catch(error => {console.error(error)})
+            const [nombreProductoMayorCantidad] = dataProducts.reduce((mayorProducto, producto) =>
+                parseInt(producto[1]) > parseInt(mayorProducto[1]) ? producto : mayorProducto
+            ); 
+            
+            this.datosGrafica.labels = dataProducts.map(d => d[0]);
+            this.datosGrafica.values = dataProducts.map(d => d[1]);
+            
+            this.getGraficar();
+
+            const sales     = await fetch(`/estadisticas/ventaspormes/${mes}`);
+            const dataSales = await sales.json();
+
+            Templates.getDesglose(dataSales, nombreProductoMayorCantidad);
+            Templates.getHistory(dataSales);
+
+        } catch(error){ console.error(error); }
     }
 
 }
 
 Estadisticas.getEstadisticas();
+
+

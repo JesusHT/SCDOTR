@@ -34,3 +34,24 @@ class Estadisticas:
         parametros = (mes,)
 
         return self.conexion.obtener_registros(query, parametros)
+
+    def obtener_compras_total_ventas(self, mes=None):
+        query = """
+            SELECT
+                C.IdCompra,
+                C.FechaCompra,
+                C.TotalCompra
+            FROM
+                Compra C
+            WHERE
+                MONTH(C.FechaCompra) = %s OR %s IS NULL;
+        """
+
+        parametros = (mes, mes) if mes else (None, None)
+
+        registros = self.conexion.obtener_registros(query, parametros)
+
+        print(registros)
+        
+
+        return registros

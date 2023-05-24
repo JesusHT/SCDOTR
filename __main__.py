@@ -262,6 +262,18 @@ def getBestSellingProducts():
 def getFechasCompras():
     return statistics.getFechasCompras()
 
+# OBTENER LAS VENTAS GENERALES
+
+@app.route('/estadisticas/periodos')
+def getSalesAll():
+    return statistics.obtener_compras_total_ventas()
+
+# OBTENER LAS VENTAS POR MES
+
+@app.route('/estadisticas/ventaspormes/<int:mes>', methods=['GET'])
+def getSalesByMonth(mes):
+    return statistics.obtener_compras_total_ventas(mes)
+
 # OBTENER LOS 5 PRODUCTOS MÁS VENDIDOS POR PERIODO (MES)
 
 @app.route('/estadisticas/productosmasvendidos/<int:mes>', methods=['GET'])
@@ -353,7 +365,7 @@ def stop_detect():
 
 @app.route('/get_detections', methods=['GET'])
 def get_detections():
-    with open('/home/jesusht/Documents/SCDOTR/detected/productos.json', 'r') as file:
+    with open('/home/jesusht/Documentos/SCDOTR/detected/productos.json', 'r') as file:
         data = json.load(file)
 
     return jsonify(data)
@@ -364,7 +376,7 @@ def get_detections():
 def restart_detections():
     data = []
     
-    with open('/home/jesusht/Documents/SCDOTR/detected/productos.json', 'w') as file:
+    with open('/home/jesusht/Documentos/SCDOTR/detected/productos.json', 'w') as file:
         json.dump(data, file)
 
     return jsonify(True)
@@ -375,7 +387,7 @@ def restart_detections():
 def newProducts():
     data = request.get_json()
 
-    with open('/home/jesusht/Documents/SCDOTR/detected/productos.json', 'w') as file:
+    with open('/home/jesusht/Documentos/SCDOTR/detected/productos.json', 'w') as file:
         json.dump(data, file)   
 
     return jsonify(True)

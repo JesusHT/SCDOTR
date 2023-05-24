@@ -18,8 +18,8 @@ const productos = {
                             <td>${data[i][6]}</td>
                             <td>${data[i][5]}</td>
                             <td>
-                              <button type="button" class="btn btn-info"   onclick="Template_modal.openModalProductos(${data[i][0]})">Editar</button>
-                              <button type="button" class="btn btn-danger" onclick="productos.deleteProduct(${data[i][0]})" >Eliminar</button>
+                              <button type="button" class="btn btn-info text-white "   onclick="Template_modal.openModalProductos(${data[i][0]})"><i class="bi bi-pencil-square"></i></button>
+                              <button type="button" class="btn btn-danger" onclick="productos.deleteProduct(${data[i][0]})" ><i class="bi bi-trash3-fill"></i></button>
                             </td>
                         </tr>`;
                 }
@@ -111,8 +111,8 @@ productos.elementos.search.addEventListener("input", () => {
                                 <td>${data[i][6]}</td>
                                 <td>${data[i][5]}</td>
                                 <td>
-                                  <button type="button" class="btn btn-info"   onclick="Template_modal.openModalProductos(${data[i][0]})">Editar</button>
-                                  <button type="button" class="btn btn-danger" onclick="productos.deleteProduct(${data[i][0]})" >Eliminar</button>
+                                  <button type="button" class="btn btn-info text-white"   onclick="Template_modal.openModalProductos(${data[i][0]})"><i class="bi bi-pencil-square"></i></button>
+                                  <button type="button" class="btn btn-danger" onclick="productos.deleteProduct(${data[i][0]})" ><i class="bi bi-trash3-fill"></i></button>
                                 </td>
                             </tr>`;
                     }   

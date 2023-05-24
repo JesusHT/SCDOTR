@@ -19,8 +19,8 @@ const proveedores = {
                             <td>${data[i][3]}</td>
                             <td>${data[i][4]}</td>
                             <td>
-                              <button type="button" class="btn btn-info"   onclick="Template_modal.openModalProveedores(${data[i][0]})">Editar</button>
-                              <button type="button" class="btn btn-danger" onclick="proveedores.deleteProveedor(${data[i][0]})" >Eliminar</button>
+                              <button type="button" class="btn btn-info text-white"   onclick="Template_modal.openModalProveedores(${data[i][0]})"><i class="bi bi-pencil-square"></i></button>
+                              <button type="button" class="btn btn-danger" onclick="proveedores.deleteProveedor(${data[i][0]})" ><i class="bi bi-trash3-fill"></i></button>
                             </td>
                         </tr>`;
                 }
@@ -109,8 +109,8 @@ proveedores.elementos.search.addEventListener("input", () => {
                                 <td>${data[i][3]}</td>
                                 <td>${data[i][4]}</td>
                                 <td>
-                                  <button type="button" class="btn btn-info"   onclick="Template_modal.openModalProveedores(${data[i][0]})">Editar</button>
-                                  <button type="button" class="btn btn-danger" onclick="proveedores.deleteProveedor(${data[i][0]})" >Eliminar</button>
+                                  <button type="button" class="btn btn-info text-white"   onclick="Template_modal.openModalProveedores(${data[i][0]})"><i class="bi bi-pencil-square"></i></button>
+                                  <button type="button" class="btn btn-danger" onclick="proveedores.deleteProveedor(${data[i][0]})" ><i class="bi bi-trash3-fill"></i></button>
                                 </td>
                             </tr>`;
                     }
