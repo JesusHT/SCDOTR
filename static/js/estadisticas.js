@@ -1,7 +1,6 @@
 const Estadisticas = {
     elementos : {
         grafica     : document.getElementById('myChart'),
-
         opciones    : document.getElementById('mes')
 
     },
@@ -26,6 +25,11 @@ const Estadisticas = {
             this.datosGrafica.values = dataProductos.map(d => d[1]);
 
             this.getGraficar();
+
+            const responseProductosVendidos = await fetch('/estadisticas/productosvendidos/0');
+            const dataProductosVendidos     = await responseProductosVendidos.json();
+
+            Templates.loadProducts(this.createArrayProducts(dataProductosVendidos));
             
             const responseFechas = await fetch('/estadisticas/fechas');
             this.fechasCompras   = await responseFechas.json();
@@ -35,7 +39,7 @@ const Estadisticas = {
             const estadisticas     = await fetch('/estadisticas/periodos');
             const dataestadisticas = await estadisticas.json();
 
-            Templates.getDesglose(dataestadisticas, nombreProductoMayorCantidad);
+            Templates.getDesglose(dataestadisticas, nombreProductoMayorCantidad, this.fechasCompras);
             Templates.getHistory(dataestadisticas);
                     
         } catch(error){ console.error(error); }
@@ -45,9 +49,7 @@ const Estadisticas = {
 
         var canvas = this.elementos.grafica;
 
-        if (canvas.myChart) {
-            canvas.myChart.destroy();
-        }
+        if (canvas.myChart){canvas.myChart.destroy();}
 
         var myChart = new Chart(canvas, {
             type: 'pie',
@@ -104,14 +106,89 @@ const Estadisticas = {
             const sales     = await fetch(`/estadisticas/ventaspormes/${mes}`);
             const dataSales = await sales.json();
 
-            Templates.getDesglose(dataSales, nombreProductoMayorCantidad);
+            Templates.getDesglose(dataSales, nombreProductoMayorCantidad, this.fechasCompras, mes);
             Templates.getHistory(dataSales);
 
-        } catch(error){ console.error(error); }
-    }
+            const responseProductosVendidos = await fetch(`/estadisticas/productosvendidos/${mes}`);
+            const dataProductosVendidos     = await responseProductosVendidos.json();
 
+            Templates.loadProducts(this.createArrayProducts(dataProductosVendidos));
+            
+        } catch(error){ console.error(error); }
+    }, 
+
+    loadProducts : function(){
+        var docDefinition = {
+            content: [
+                { text: 'Mi primer documento PDF', style: 'header' },
+                { text: 'Este es un párrafo de ejemplo en el PDF.' }
+            ],
+            styles: {
+                header: {
+                    fontSize: 18,
+                    bold: true,
+                    margin: [0, 0, 0, 10]
+                }
+            }
+        };
+
+        pdfMake.createPdf(docDefinition).print();
+    },
+
+    createArrayProducts : function(arr){
+        const productos = {};
+
+        arr.forEach(item => {
+            const nombreProducto = item.Nombre;
+            const cantidad       = parseFloat(item.Cantidad);
+            const precioProducto = parseFloat(item.PrecioProducto);
+            const descuento      = parseFloat(item.Descuento);
+            const idProducto     = item.IdProducto;
+        
+            if (!productos.hasOwnProperty(nombreProducto)) {
+                productos[nombreProducto] = {
+                    cantidad: 0,
+                    ganancias: 0,
+                    top: false,
+                    id: idProducto
+                };
+            }
+        
+            productos[nombreProducto].cantidad  += cantidad;
+            productos[nombreProducto].ganancias += (cantidad * precioProducto) - descuento;
+        });
+      
+        let productoMasVendido = null;
+        let maxCantidad = 0;
+      
+        for (const nombreProducto in productos) {
+            const cantidad = productos[nombreProducto].cantidad;
+        
+            if (cantidad > maxCantidad) {
+                maxCantidad = cantidad;
+                productoMasVendido = nombreProducto;
+            }
+        }
+      
+        if (productoMasVendido !== null) {
+            productos[productoMasVendido].top = true;
+        }
+      
+        const nuevoArray = [];
+      
+        for (const nombreProducto in productos) {
+            nuevoArray.push({
+                nombre: nombreProducto,
+                cantidad: productos[nombreProducto].cantidad,
+                ganancias: productos[nombreProducto].ganancias,
+                top: productos[nombreProducto].top,
+                id: productos[nombreProducto].id
+            });
+        }
+          
+        return nuevoArray;
+    }
 }
 
 Estadisticas.getEstadisticas();
-
 

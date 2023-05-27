@@ -1,4 +1,5 @@
 from libs.connection import MySQLConnection
+import datetime
 
 class Estadisticas:
     def __init__(self):
@@ -49,9 +50,67 @@ class Estadisticas:
 
         parametros = (mes, mes) if mes else (None, None)
 
-        registros = self.conexion.obtener_registros(query, parametros)
-
-        print(registros)
-        
+        registros = self.conexion.obtener_registros(query, parametros)        
 
         return registros
+
+    def obtener_productos_vendidos(self, mes=None):
+        sql = """
+            SELECT c.IdCompra, 
+                   c.FechaCompra, 
+                   c.TotalCompra, 
+                   c.Pago, 
+                   c.Cambio, 
+                   dc.IdProducto, 
+                   dc.IdCompra AS IdCompraDetalles, 
+                   dc.IdProducto AS IdProductoDetalles, 
+                   dc.PrecioProducto,
+                   dc.Cantidad, 
+                   dc.Descuento,
+                   p.nombre AS Nombre
+            FROM Compra c
+            INNER JOIN DetallesCompra dc ON c.IdCompra = dc.IdCompra
+            INNER JOIN producto p ON dc.IdProducto = p.id
+            WHERE MONTH(c.FechaCompra) = %s OR %s IS NULL;
+            """
+        
+        parametros = (mes, mes) if mes else (None, None)
+
+        results = self.conexion.obtener_registros(sql, parametros)
+    
+        formatted_results = [{
+            "IdCompra": row[0],
+            "FechaCompra": (
+                datetime.datetime.strptime(str(row[1]), "%a, %d %b %Y %H:%M:%S %Z").strftime("%Y-%m-%d")
+                if isinstance(row[1], str)
+                else row[1].strftime("%Y-%m-%d")
+            ),
+            "TotalCompra": "{:.2f}".format(float(row[2])),
+            "Pago": "{:.2f}".format(float(row[3])),
+            "Cambio": "{:.2f}".format(float(row[4])),
+            "IdProducto": row[5],
+            "IdCompraDetalles": row[6],
+            "IdProductoDetalles": row[7],
+            "PrecioProducto":  "{:.2f}".format(float(row[8])),
+            "Cantidad": "{:.2f}".format(float(row[9])),
+            "Descuento": "{:.2f}".format(float(row[10])),
+            "Nombre": row[11]
+        } for row in results]
+        
+
+        return formatted_results
+    
+    def getGanaciasByMonth(self, mes):
+        sql = """
+            SELECT SUM(TotalCompra) AS TotalMes FROM Compra WHERE MONTH(FechaCompra) = %s;
+            """
+
+        parametros = (mes,)
+
+        results = self.conexion.obtener_registros(sql, parametros) 
+
+        ganancias = [{
+            "ganancias": "{:.2f}".format(float(row[0])),
+        } for row in results]       
+
+        return ganancias

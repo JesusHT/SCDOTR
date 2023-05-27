@@ -9,3 +9,16 @@
 .hover-accordion:hover {
     background-color: lightgray;
 }
+
+.config-icons{
+    color: #F66B0E; 
+    font-size: 2rem;
+}
+
+.bg-product{
+    background-color: #112B3C;
+}
+
+.bg-top-product {
+    background-color: #F66B0E;
+}

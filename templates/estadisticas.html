@@ -10,8 +10,10 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/estadisticas.css') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">        
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.1.1/css/all.css">
 </head>
 <body>
+    <!-- Nav -->
     <nav>
         <div class="px-3 py-2 bg-dark text-white">
             <div class="container">
@@ -59,49 +61,145 @@
         </div>
     </nav>
 
+    <!-- Body -->
     <div class="container">
-        <div class="row">
-            <div class="col-1"></div>
+        <div class="row justify-content-center">
             <div class="col-10">
                 <h2 class="mt-2">Estadisticas</h2>
-
+            
                 <div class="input-group mb-3 w-50">
                     <label class="input-group-text" for="mes"><i class="bi bi-calendar-event-fill"></i></label>
-                    <select class="form-select" id="mes">
-                    </select>
+                    <select class="form-select" id="mes"></select>
                     <button type="button" class="btn bg-dark text-white" onclick="Estadisticas.getProductosByPeriodo()">Consultar</button>
                 </div>
             </div>
-            <div class="col-1"></div>
-            <div class="col-1"></div>
-            <div class="col-4">
+        </div>
+      
+        <div class="row justify-content-center">
+            <section class="col-4">
                 <div class="justify-content-center shadow p-3 bg-body-tertiary rounded h-100">
-                    <canvas id="myChart"></canvas>  
+                    <h4 class="text-center">Top 5 productos más vendidos</h4>
+                    <canvas id="myChart"></canvas>
                 </div>
-            </div>
-            <div class="col-6">
-                <div class="justify-content-center shadow p-3 bg-body-tertiary rounded h-100" id="desglose">
-                                                         
-                </div>
-            </div>
-            <div class="col-1"></div>
-            <div class="col-1"></div>
-            <div class="col-10 mt-3 p-2">
-                <div class="accordion accordion-flush" id="history">
-                    
-                    
+            </section>
+            <section class="col-6">
 
+                <div class="row">
+                    <div class="col-12 justify-content-center shadow p-3 bg-body-tertiary rounded mb-2" id="ganancias"></div>
 
+                    <div class="col-12 justify-content-center shadow p-3 bg-body-tertiary rounded">
+                        <div id="productsAll" class="carousel slide" >
+                            <div class="row">
+
+                                <div class="col-1 d-flex align-items-center justify-content-end">
+                                    <a class="" href="#productsAll" role="button" data-bs-slide="prev">
+                                        <i class="fa-solid fa-chevron-left config-icons" aria-hidden="true"></i>
+                                        <span class="visually-hidden">Previous</span>
+                                    </a>
+                                </div>
+
+                               <div class="col-10">
+                                    <div class="carousel-inner w-100" id="body-products"></div>
+                               </div>
+
+                                <div class="col-1 d-flex align-items-center justify-content-start">
+                                    <a href="#productsAll" role="button" data-bs-slide="next">
+                                        <i class="fa-solid fa-chevron-right config-icons"></i>
+                                        <span class="visually-hidden">Next</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+
+            </section>
+        </div>
+      
+        <div class="row justify-content-center mt-3 p-2">
+            <div class="col-10">
+                <div class="accordion accordion-flush" id="history"></div>
             </div>
-            <div class="col-1"></div>
-        </div> 
+        </div>
     </div>
-
+      
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#pdfContent">Launch static backdrop modal</button>
+  
+    <!-- Modal -->
+    <div class="modal fade" id="pdfContent" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="pdfContentLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="pdfContentLabel">Recibo de Productos</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-6">
+                                <h6> <span class="fw-bold">Fecha: </span>26 de mayo de 2023</h6>
+                                <h6> <span class="fw-bold">No. Ticket: </span>  12345</h6>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <table class="table table-borderless mt-4">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Producto</th>
+                                            <th scope="col">Cant.</th>
+                                            <th scope="col">Precio c/u</th>
+                                            <th scope="col">Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Producto 1</td>
+                                            <td scope="row" class="text-center">2</td>
+                                            <td>$10.00</td>
+                                            <td>$20.00</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Producto 2</td>
+                                            <td class="text-center">1</td>
+                                            <td>$15.00</td>
+                                            <td>$15.00</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Producto 3</td>
+                                            <td scope="row" class="text-center">3</td>
+                                            <td>$8.50</td>
+                                            <td>$25.50</td>
+                                        </tr>
+                                        <!-- Agrega o elimina filas según sea necesario -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6 offset-6">
+                                <h5 class="text-end">Total: $60.50</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" onclick="Estadisticas.loadProducts()" class="btn btn-primary" id="generatePDFButton"><i class="bi bi-printer-fill"></i> Imprimir</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js" integrity="sha384-zYPOMqeu1DAVkHiLqWBUTcbYfZ8osu1Nd6Z89ify25QV9guujx43ITvfi12/QExE" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.min.js" integrity="sha384-Y4oOpwW3duJdCWv5ly8SCFYWqFDsfob/3GkgExXKV4idmbt98QcxXYs9UoXAB7BZ" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.68/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.68/vfs_fonts.js"></script>
     <script src="{{ url_for('static', filename='js/estadisticas.js') }}"></script>
     <script src="{{ url_for('static', filename='js/templatesEstadisticas.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </body>
 </html>
+
+  

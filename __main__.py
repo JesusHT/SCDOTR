@@ -2,7 +2,7 @@ import cv2
 import supervision as sv
 import json
 from ultralytics import YOLO
-from flask import Flask, render_template, request, redirect, url_for, jsonify, session, Response
+from flask import Flask, render_template, request, redirect, url_for, jsonify, session, Response, make_response
 from libs.permissions import RoutePermission
 from libs.login import Login
 from libs.productos import Productos
@@ -120,7 +120,6 @@ def updateProduct():
         products.updateProduct(data_dict['id'], data_dict['nombre'], data_dict['descripcion'], data_dict['precio'], data_dict['proveedor_id'], data_dict['existencias'])
         return jsonify(True)
     else:
-        print(validar)
         return jsonify(validar)
 
 # ELIMINAR PRODUCTO 
@@ -282,6 +281,18 @@ def getBestSellingProductsByMes(mes):
         return statistics.getBestSellingProducts()
     else :
         return statistics.getBestSellingProductsByMes(mes)
+    
+# OBTENER LOS PRODUCTOS VENDIDOS
+@app.route('/estadisticas/productosvendidos/<int:mes>', methods=['GET'])
+def obtener_productos_vendidos(mes):
+    if mes == 0 :
+        mes = None
+    return statistics.obtener_productos_vendidos(mes)
+
+# OBTENER LAS GANCIAS POR MES
+@app.route('/gananciaspormes/<int:mes>', methods=['GET'])
+def getGanaciasByMonth(mes):
+    return statistics.getGanaciasByMonth(mes)
 
 
 ############################# COBROS ##########################################
@@ -391,6 +402,7 @@ def newProducts():
         json.dump(data, file)   
 
     return jsonify(True)
+
 
 # PAGAR PRODUCTOS
 

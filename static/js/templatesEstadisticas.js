@@ -1,17 +1,18 @@
 const Templates = {
     elementos : {
-        desglose : document.getElementById('desglose'),
+        ganancias : document.getElementById('ganancias'),
         history  : document.getElementById('history')
     },
 
-    getDesglose : function(data, producto){
+    porcentaje : 0,
+
+    getDesglose : function(data, producto, fechas, mes=''){
         const dataDesglose = {
-            more      : '',
             ganancias : this.calGanancias(data),
             producto  : producto
         }
 
-        this.loadDesglose(dataDesglose);
+        this.loadDesglose(dataDesglose, fechas, mes);
     },
 
     calGanancias : function(registros){
@@ -20,31 +21,42 @@ const Templates = {
         return total.toFixed(2);
     },
 
-    calPorcentaje : function(data){
+    calPorcentaje : async function(ganancias, mes){
+        const ingresosMesActual = ganancias;
+        
+        const neto     = await fetch(`/gananciaspormes/${mes}`);
+        const cantidad = await neto.json();
 
+        const ingresosMesAnterior = cantidad[0].ganancias;
+
+        const diferenciaIngresos = ingresosMesActual - ingresosMesAnterior;
+        const porcentajeCambio = (diferenciaIngresos / ingresosMesAnterior) * 100;
+        const porcentajeCambioRedondeado = porcentajeCambio.toFixed(2);
+
+        this.porcentaje = porcentajeCambioRedondeado;
     },
 
-    loadDesglose : function(data){
+    loadDesglose : async function(data, fechas, mes){
+        const numeroMenor = fechas.flat().find(numero => numero < mes);
+        let   peningo = '';
+
+        if (mes !== '' && numeroMenor !== undefined) {
+            await this.calPorcentaje(data.ganancias, numeroMenor);
+            peningo = this.porcentaje > 0 && this.porcentaje !== 0 ? `<i class="fa-solid fa-arrow-trend-up" style="color: #2f9309;"></i> ${this.porcentaje}%` : `<i class="fa-solid fa-arrow-trend-down" style="color: #a51d2d;"></i> ${this.porcentajeCambio}%`;
+        }        
+
+        
 
         let html = `
-            <h3 class="text-center">Desglose</h3>
-
-            <div class="p-2">
-                <p class="fs-4">Ganacias: </p>
+                <h4>Ganacias: </h4>
                 <p>
                     <span class="fs-3 fw-bold">$${data.ganancias} MXN</span> 
-                    ${data.more}
-                </p>
-            </div>
-            <div class="p-2">
-                <p class="fs-4">Producto más vendido:</p>
-                <div class="text-center">
-                    <img src="./../static/img/${data.producto}.png" alt="${data.producto}" class="img-fluid rounded bg-dark rounded-circle p-3" width="200" title="${data.producto}"> 
-                </div>
-            </div>   
+                    ${peningo}
+                </p>   
         `;
 
-        this.elementos.desglose.innerHTML = html;
+        this.elementos.ganancias.innerHTML = html;
+        this.porcentaje = 0;
     },
 
     getHistory : function(data){
@@ -62,9 +74,7 @@ const Templates = {
             const date = new Date(dateString);
             const month = date.toLocaleString('es', { month: 'long' });
             
-            if (!purchasesByMonth.hasOwnProperty(month)) {
-                purchasesByMonth[month] = [];
-            }
+            if (!purchasesByMonth.hasOwnProperty(month)) { purchasesByMonth[month] = []; }
           
             purchasesByMonth[month].push({
                 id: purchase[0],
@@ -135,6 +145,84 @@ const Templates = {
                 this.elementos.history.appendChild(accordionItem);
           }
         }
+    },
+
+    loadProducts : function(productos) {
+        const contenedor = document.getElementById('body-products');
+        contenedor.innerHTML = '';
+      
+        productos.forEach(producto => {
+            const { nombre, id, cantidad, ganancias, top } = producto;
+            const activo = top ? 'active' : '';
+            
+            const carouselItem = document.createElement('div');
+            carouselItem.classList.add('carousel-item');
+            carouselItem.classList.toggle('active', !!activo);
+            
+            const row = document.createElement('div');
+            row.classList.add('row');
+            
+            const imageCol = document.createElement('div');
+            imageCol.classList.add('col-md-6');
+            imageCol.classList.add('d-flex');
+            imageCol.classList.add('justify-content-center');
+            imageCol.classList.add('align-items-center');
+            
+            const productImage = document.createElement('div');
+            productImage.classList.add('product-image');
+            productImage.classList.add('rounded-circle');
+
+            let style = top ? 'bg-top-product' : 'bg-product';
+
+            productImage.classList.add(style);
+            
+            const image = document.createElement('img');
+            image.src = `./../static/img/${nombre}.png`;
+            image.classList.add('d-block');
+            image.classList.add('w-100');
+            image.alt = 'Product';
+            
+            const textCol = document.createElement('div');
+            textCol.classList.add('col-md-6');
+            textCol.classList.add('d-flex');
+            textCol.classList.add('flex-column');
+            textCol.classList.add('justify-content-center');
+            textCol.classList.add('bg-dark');
+            textCol.classList.add('text-white');
+            textCol.classList.add('p-4');
+            
+            const productName = document.createElement('h4');
+            productName.classList.add('text-center');
+            
+            productName.textContent = nombre == 'Chetos' ? 'Cheetos' : nombre.replace(/_/g, ' ');
+            
+            const productId = document.createElement('p');
+            productId.classList.add('mb-2');
+            productId.textContent = `No. Producto: ${id}`;
+            
+            const productQuantity = document.createElement('p');
+            productQuantity.classList.add('mb-2');
+            productQuantity.textContent = `Cantidad vendida: ${cantidad}`;
+            
+            const productGanancias = document.createElement('p');
+            productGanancias.classList.add('mb-2');
+            productGanancias.textContent = `Ganancias: $${ganancias}`;
+            
+            productImage.appendChild(image);
+            imageCol.appendChild(productImage);
+            
+            textCol.appendChild(productName);
+            textCol.appendChild(productId);
+            textCol.appendChild(productQuantity);
+            textCol.appendChild(productGanancias);
+            
+            row.appendChild(imageCol);
+            row.appendChild(textCol);
+            
+            carouselItem.appendChild(row);
+            
+            contenedor.appendChild(carouselItem);
+        });
     },
 
     formatDate : function(dateString) {
