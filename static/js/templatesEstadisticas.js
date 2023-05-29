@@ -120,22 +120,22 @@ const Templates = {
                 <div class="modal fade" id="pdfContent" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="pdfContentLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">
-                            <div class="modal-header">
+                            <div class="modal-header bg-orange text-white">
                                 <h1 class="modal-title fs-5" id="pdfContentLabel">Recibo de Productos</h1>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                <button type="button" class="btn" data-bs-dismiss="modal" aria-label="Close"><i class="fa-solid fa-x text-white"></i></button>
                             </div>
                             <div class="modal-body">
                                 <div class="container">
                                     <div class="row">
                                         <div class="col-6">
-                                            <h6> <span class="fw-bold">Fecha:      </span>${Details[0].Fecha}</h6>
-                                            <h6> <span class="fw-bold">No. Ticket: </span>${Details[0].IdCompra}</h6>
+                                            <h6 class="bg-darkblue-1 p-2 text-white"><span class="fw-bold">Fecha:      </span>${Details[0].Fecha}</h6>
+                                            <h6 class="bg-darkblue-1 p-2 text-white text-center"><span class="fw-bold">No. Ticket: </span>${Details[0].IdCompra}</h6>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-12">
                                             <table class="table table-borderless mt-4">
-                                                <thead>
+                                                <thead class="bg-orange text-white">
                                                     <tr>
                                                         <th scope="col">Producto</th>
                                                         <th scope="col">Cant.</th>
@@ -148,14 +148,14 @@ const Templates = {
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-6 offset-6">
-                                            <h5 class="text-end">Total: $${total}</h5>
+                                        <div class="col-6 offset-6 d-flex justify-content-end">
+                                            <h5 class=" bg-darkblue-1 p-2 text-white total">Total: $${total}</h5>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" onclick="Estadisticas.loadProducts()" class="btn btn-primary" id="generatePDFButton"><i class="bi bi-printer-fill"></i> Imprimir</button>
+                                <button type="button" onclick="Estadisticas.loadProducts()" class="btn bg-darkblue-2 text-white " id="generatePDFButton"><i class="bi bi-printer-fill"></i> Imprimir</button>
                             </div>
                         </div>
                     </div>

@@ -41,8 +41,7 @@ CREATE TABLE `Compra` (
 
 INSERT INTO `Compra` (`IdCompra`, `FechaCompra`, `TotalCompra`, `Pago`, `Cambio`) VALUES
 (1, '2023-05-10', '74.00', '200.00', '126.00'),
-(2, '2023-04-29', '3.00', '3.00', '0.00'),
-(3, '2023-05-20', '100.00', '150.00', '-50.00');
+(2, '2023-04-29', '3.00', '3.00', '0.00');
 
 --
 -- Disparadores `Compra`

@@ -10,6 +10,7 @@ from libs.productos import Productos
 from libs.provedores import Proveedores
 from libs.validateData import ValidateData
 from libs.estadisticas import Estadisticas
+from libs.cobro import Cobro
 
 ############################# INSTANCIAR ##############################################
 
@@ -21,6 +22,7 @@ products       = Productos()
 suppliers      = Proveedores()
 validate       = ValidateData()
 statistics     = Estadisticas()
+pay            = Cobro()
 
 ############################# INDEX ###################################################
 
@@ -432,9 +434,18 @@ def newProducts():
 def payProducts():
     data = request.form
 
-    print(data)
+    return jsonify(pay.setCompra(data), pay.getPurchaseDetails())
 
-    return jsonify(True)
+
+############################### HISTORIAL ##############################################
+
+# CARGAR VISTA HISTORIAL
+
+@app.route('/historial')
+@permission.verificar_permiso("/historial", ['user'])
+def viewHistory():
+    return render_template('historial.html', username=session.get("username"))
+
 
 ############################# INICIAR PROGRAMA ##########################################
 

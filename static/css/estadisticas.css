@@ -31,3 +31,21 @@
 .opacity-0{
     visibility: hidden;
 }
+
+.bg-orange {
+    background-color: #F66B0E;
+}
+
+.bg-darkblue-1 {
+    background-color: #205375;
+}
+
+.bg-darkblue-2 {
+    background-color: #112B3C!important;
+}.bg-darkblue-2:hover {
+    background-color: #112b3cd0!important;
+}
+
+.total {
+    max-width: 200px;
+}
