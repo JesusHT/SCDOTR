@@ -65,7 +65,7 @@ const proveedores = {
 
     deleteProveedor : async function(idProveedor){
         const response = await fetch(`/proveedores/contar/${idProveedor}`);
-        const data = await response.json();
+        const data     = await response.json();
             
         const message = data != false ? `¿Desea eliminar este proveedor? Usted tiene ${data} producto/s que usan este proveedor que se borraran, la acción es irreversible. Escriba CONFIRMAR para confirmar la acción:` 
                                       : "¿Desea eliminar este proveedor? La acción es irreversible. Escriba CONFIRMAR para confirmar la acción:" ;

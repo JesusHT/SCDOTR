@@ -22,3 +22,12 @@
 .bg-top-product {
     background-color: #F66B0E;
 }
+
+.text-justify {
+    text-align: justify;
+    text-justify: inter-word;
+}
+
+.opacity-0{
+    visibility: hidden;
+}

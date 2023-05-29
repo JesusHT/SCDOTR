@@ -1,6 +1,7 @@
 import cv2
 import supervision as sv
 import json
+from config.config import DETECTION_PATH
 from ultralytics import YOLO
 from flask import Flask, render_template, request, redirect, url_for, jsonify, session, Response, make_response
 from libs.permissions import RoutePermission
@@ -294,6 +295,27 @@ def obtener_productos_vendidos(mes):
 def getGanaciasByMonth(mes):
     return statistics.getGanaciasByMonth(mes)
 
+# OBTENER LOS DETALLES DE COMPRA POR ID
+@app.route('/estadisticas/detallesdecompra/<int:idCompra>', methods=['GET'])
+def getPurchaseDetails(idCompra):
+    return statistics.getPurchaseDetails(idCompra)
+
+# VALIDAR SI SE NECECITA STOCK
+@app.route('/stock')
+def verifyingStock():
+    return jsonify(statistics.verifyingStock())
+
+# BUSCAR VENTAS 
+
+@app.route('/estadisticas/buscar', methods=['POST'])
+def searchDetails():
+    data = request.form
+
+    mes = None if data['mes'] == '0' else data['mes']
+
+    return statistics.searchDetails(data['search'], mes)
+
+    
 
 ############################# COBROS ##########################################
 
@@ -370,13 +392,13 @@ def detect():
 def stop_detect():
     global run_detection
     run_detection = False
-    return jsonify(True)
+    return jsonify(True)    
 
 # OBTENER DETECCIONES 
 
 @app.route('/get_detections', methods=['GET'])
 def get_detections():
-    with open('/home/jesusht/Documentos/SCDOTR/detected/productos.json', 'r') as file:
+    with open(DETECTION_PATH, 'r') as file:
         data = json.load(file)
 
     return jsonify(data)
@@ -387,7 +409,7 @@ def get_detections():
 def restart_detections():
     data = []
     
-    with open('/home/jesusht/Documentos/SCDOTR/detected/productos.json', 'w') as file:
+    with open(DETECTION_PATH, 'w') as file:
         json.dump(data, file)
 
     return jsonify(True)
@@ -398,7 +420,7 @@ def restart_detections():
 def newProducts():
     data = request.get_json()
 
-    with open('/home/jesusht/Documentos/SCDOTR/detected/productos.json', 'w') as file:
+    with open(DETECTION_PATH, 'w') as file:
         json.dump(data, file)   
 
     return jsonify(True)
@@ -417,4 +439,4 @@ def payProducts():
 ############################# INICIAR PROGRAMA ##########################################
 
 if __name__ == '__main__':
-    app.run(debug=True, port=7070)  
+    app.run(debug=True, port=7070)
