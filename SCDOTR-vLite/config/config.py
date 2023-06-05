@@ -8,4 +8,5 @@ HOST     = 'localhost'
 
 # CONFIGURACION DE RUTAS 
 
+# Add route 
 DETECTION_PATH = '/home/jesusht/Documentos/SCDOTR/SCDOTR-vLite/detected/productos.json'
