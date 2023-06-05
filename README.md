@@ -63,6 +63,22 @@ El Sistema de Cobro por Detección de Objetos en Tiempo Real (SCDOTR) es una sol
 - Versión Lite: ["Coca-cola mediana","Coca-cola chica"]
   
  Nota: Se debe colocar los productos en una superficie blanca para una mejor detección.
+ 
+## Créditos
+
+El proyecto SCDOTR ha sido desarrollado por:
+
+- [Jesús Hernández](https://github.com/JesusHT)
+- [Jairo Preciado](https://github.com/JairoPreciado)
+- [Nadia Michelle](https://github.com/NadiaMichelle)
+- [Fátima Marín](https://github.com/fmarin0)
+
+Siéntete libre de visitar sus perfiles de GitHub para conocer más sobre sus contribuciones.
+
+## Licencia
+
+Este proyecto se distribuye bajo la [Licencia Pública General de GNU]. Consulta el archivo `LICENSE` para más detalles.
+
 
 
 
