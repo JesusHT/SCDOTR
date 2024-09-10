@@ -77,7 +77,7 @@ Siéntete libre de visitar sus perfiles de GitHub para conocer más sobre sus co
 
 ## Licencia
 
-Este proyecto se distribuye bajo la [Licencia Pública General de GNU]. Consulta el archivo `LICENSE` para más detalles.
+Este proyecto se distribuye bajo la [Licencia Pública General de GNU]. Consulta el archivo `LICENSE` para más detalles .
 
 
 
